@@ -2,70 +2,91 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Lightbulb, Target, Shield, CheckCircle2, Circle } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckSquare, Users as UsersIcon, Lightbulb, Repeat, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StepProgress } from "@/components/ui/ProgressBar";
-import { useFutureHeadlines, useOpportunities, useDesignPrinciples } from "@/store/workshop";
+import { useScalingChecklist, useTrainingPlan, useLessonsLearned, useNextOpportunities } from "@/store/workshop";
 
 const exercises = [
   {
-    id: "future-headlines",
-    title: "Future Headlines",
+    id: "scaling-checklist",
+    title: "Scaling Checklist",
+    icon: <CheckSquare className="w-5 h-5" />,
+    description:
+      "Verify readiness to scale: documentation exists, training materials are created, ownership is clear, feedback loops work, and metrics are tracked.",
+    duration: "20-30 min",
+    tips: [
+      "Ensure the solution is documented for others to understand",
+      "Create training materials before broader rollout",
+      "Assign clear ownership for ongoing support",
+      "Establish feedback channels for users",
+    ],
+    path: "/workshop/session-5/scaling-checklist",
+  },
+  {
+    id: "training-plan",
+    title: "Training Plan",
+    icon: <UsersIcon className="w-5 h-5" />,
+    description:
+      "Define role-based training needs, identify champions who will advocate for adoption, and set target dates for training completion.",
+    duration: "30-45 min",
+    tips: [
+      "Different roles need different training depth",
+      "Identify early adopters who can champion the solution",
+      "Plan for ongoing training as solution evolves",
+      "Include hands-on practice sessions",
+    ],
+    path: "/workshop/session-5/training-plan",
+  },
+  {
+    id: "lessons-learned",
+    title: "Lessons Learned",
     icon: <Lightbulb className="w-5 h-5" />,
     description:
-      "Imagine it's 2-3 years from now. What headlines would you want to read about your organization's AI journey? This exercise helps align on aspirations and vision.",
+      "Capture what worked well, what challenges you faced, unexpected outcomes, and recommendations for future AI pilots.",
     duration: "30-45 min",
     tips: [
-      "Think bold - don't limit yourself to what seems possible today",
-      "Consider headlines about member experience, employee satisfaction, and business results",
-      "Include both opportunities and risks you've successfully navigated",
+      "Document both successes and failures honestly",
+      "Include unexpected findings - they're often most valuable",
+      "Note which patterns can be reused elsewhere",
+      "Share learnings across the organization",
     ],
-    path: "/workshop/session-1/future-headlines",
+    path: "/workshop/session-5/lessons-learned",
   },
   {
-    id: "opportunity-brainstorm",
-    title: "Opportunity Brainstorm",
-    icon: <Target className="w-5 h-5" />,
+    id: "next-opportunities",
+    title: "Next Opportunities",
+    icon: <Repeat className="w-5 h-5" />,
     description:
-      "Capture initial ideas about where Agentic AI could help across your organization. We'll refine and prioritize these in Session 2.",
-    duration: "45-60 min",
-    tips: [
-      "Focus on friction points and pain points first",
-      "Consider both member-facing and back-office processes",
-      "Don't worry about feasibility yet - that comes later",
-    ],
-    path: "/workshop/session-1/opportunity-brainstorm",
-  },
-  {
-    id: "design-principles",
-    title: "Design Principles & Guardrails",
-    icon: <Shield className="w-5 h-5" />,
-    description:
-      "Define the hard boundaries that must never be crossed (guardrails) and the aspirational principles that should guide your AI implementation.",
+      "Identify the next friction areas where you can apply proven patterns, estimate value, and prioritize your pipeline.",
     duration: "30-45 min",
     tips: [
-      "Guardrails are non-negotiable - violations should trigger immediate escalation",
-      "Principles are aspirational goals that guide decision-making",
-      "Consider member trust, employee empowerment, and regulatory compliance",
+      "Look for similar friction patterns in other areas",
+      "Reuse successful approaches from this pilot",
+      "Start small again - don't try to scale too fast",
+      "Build momentum with quick wins",
     ],
-    path: "/workshop/session-1/design-principles",
+    path: "/workshop/session-5/next-opportunities",
   },
 ];
 
-export default function Session1Page() {
-  const futureHeadlines = useFutureHeadlines();
-  const opportunities = useOpportunities();
-  const designPrinciples = useDesignPrinciples();
+export default function Session5Page() {
+  const scalingChecklist = useScalingChecklist();
+  const trainingPlan = useTrainingPlan();
+  const lessonsLearned = useLessonsLearned();
+  const nextOpportunities = useNextOpportunities();
 
   const getExerciseStatus = (id: string): "pending" | "in-progress" | "completed" => {
     switch (id) {
-      case "future-headlines":
-        return futureHeadlines.length > 0 ? "completed" : "pending";
-      case "opportunity-brainstorm":
-        return opportunities.length > 0 ? "completed" : "pending";
-      case "design-principles":
-        return designPrinciples.length > 0 ? "completed" : "pending";
+      case "scaling-checklist":
+        return scalingChecklist.length > 0 ? "completed" : "pending";
+      case "training-plan":
+        return trainingPlan.length > 0 ? "completed" : "pending";
+      case "lessons-learned":
+        return lessonsLearned.length > 0 ? "completed" : "pending";
+      case "next-opportunities":
+        return nextOpportunities.length > 0 ? "completed" : "pending";
       default:
         return "pending";
     }
@@ -82,13 +103,12 @@ export default function Session1Page() {
         className="mb-8"
       >
         <span className="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider uppercase bg-[var(--color-accent)]/10 text-[var(--color-accent)] rounded">
-          Session 1 of 5
+          Session 5 of 5
         </span>
-        <h1 className="text-3xl font-bold mb-4">Orientation & Shared Understanding</h1>
+        <h1 className="text-3xl font-bold mb-4">Empower Teams</h1>
         <p className="text-[var(--color-text-muted)] text-lg">
-          The goal of this session is to build a common understanding of what Agentic AI
-          means for your organization, define your aspirations, and establish clear
-          boundaries.
+          Scale what works and build organizational capability. Document learnings, train teams,
+          establish ownership, and identify the next opportunities for AI-enabled transformation.
         </p>
       </motion.div>
 
@@ -172,7 +192,7 @@ export default function Session1Page() {
                     <ul className="space-y-2">
                       {exercise.tips.map((tip, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-[var(--color-text-body)]">
-                          <Circle className="w-1.5 h-1.5 mt-2 flex-shrink-0 fill-[var(--color-accent)]" />
+                          <span className="w-1.5 h-1.5 mt-2 flex-shrink-0 rounded-full bg-[var(--color-accent)]" />
                           {tip}
                         </li>
                       ))}
@@ -192,13 +212,15 @@ export default function Session1Page() {
         transition={{ delay: 0.5 }}
         className="mt-12 flex justify-between items-center"
       >
-        <Link href="/workshop">
-          <Button variant="ghost">Back to Overview</Button>
+        <Link href="/workshop/session-4">
+          <Button variant="ghost" leftIcon={<ArrowLeft className="w-4 h-4" />}>
+            Back to Session 4
+          </Button>
         </Link>
         {completedCount === exercises.length && (
-          <Link href="/workshop/session-2">
+          <Link href="/workshop">
             <Button variant="primary" rightIcon={<ArrowRight className="w-4 h-4" />}>
-              Continue to Session 2
+              Complete Workshop
             </Button>
           </Link>
         )}

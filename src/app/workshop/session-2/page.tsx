@@ -101,7 +101,7 @@ export default function Session2Page() {
         className="mb-8"
       >
         <span className="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider uppercase bg-[var(--color-accent-coral)]/10 text-[var(--color-accent-coral)] rounded">
-          Session 2 of 4
+          Session 2 of 5
         </span>
         <h1 className="text-3xl font-bold mb-4">Find the Friction</h1>
         <p className="text-[var(--color-text-muted)] text-lg">

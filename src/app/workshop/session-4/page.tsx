@@ -2,70 +2,55 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Lightbulb, Target, Shield, CheckCircle2, Circle } from "lucide-react";
+import { ArrowRight, ArrowLeft, Users, Calendar, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StepProgress } from "@/components/ui/ProgressBar";
-import { useFutureHeadlines, useOpportunities, useDesignPrinciples } from "@/store/workshop";
+import { usePilotPlans, useRoadmapMilestones } from "@/store/workshop";
 
 const exercises = [
   {
-    id: "future-headlines",
-    title: "Future Headlines",
-    icon: <Lightbulb className="w-5 h-5" />,
+    id: "pilot-plan",
+    title: "Pilot Plan",
+    icon: <Users className="w-5 h-5" />,
     description:
-      "Imagine it's 2-3 years from now. What headlines would you want to read about your organization's AI journey? This exercise helps align on aspirations and vision.",
-    duration: "30-45 min",
+      "Define your pilot structure: who will test, what you'll measure, how long it will run, and what would make you stop.",
+    duration: "20-30 min",
     tips: [
-      "Think bold - don't limit yourself to what seems possible today",
-      "Consider headlines about member experience, employee satisfaction, and business results",
-      "Include both opportunities and risks you've successfully navigated",
+      "Choose 2-3 friendly users who will give honest feedback",
+      "Track metrics that matter (time saved, error rate, satisfaction)",
+      "Plan for 2-4 weeks of pilot testing",
+      "Define clear stop criteria (what would make you pull the plug)",
     ],
-    path: "/workshop/session-1/future-headlines",
+    path: "/workshop/session-4/pilot-plan",
   },
   {
-    id: "opportunity-brainstorm",
-    title: "Opportunity Brainstorm",
-    icon: <Target className="w-5 h-5" />,
+    id: "roadmap-builder",
+    title: "90-Day Roadmap",
+    icon: <Calendar className="w-5 h-5" />,
     description:
-      "Capture initial ideas about where Agentic AI could help across your organization. We'll refine and prioritize these in Session 2.",
-    duration: "45-60 min",
-    tips: [
-      "Focus on friction points and pain points first",
-      "Consider both member-facing and back-office processes",
-      "Don't worry about feasibility yet - that comes later",
-    ],
-    path: "/workshop/session-1/opportunity-brainstorm",
-  },
-  {
-    id: "design-principles",
-    title: "Design Principles & Guardrails",
-    icon: <Shield className="w-5 h-5" />,
-    description:
-      "Define the hard boundaries that must never be crossed (guardrails) and the aspirational principles that should guide your AI implementation.",
+      "Create your 90-day implementation timeline with clear milestones, owners, and success criteria for each phase.",
     duration: "30-45 min",
     tips: [
-      "Guardrails are non-negotiable - violations should trigger immediate escalation",
-      "Principles are aspirational goals that guide decision-making",
-      "Consider member trust, employee empowerment, and regulatory compliance",
+      "Weeks 1-2: Build the MVP",
+      "Weeks 3-6: Run the pilot with test users",
+      "Weeks 7-8: Refine based on feedback",
+      "Weeks 9-12: Scale to broader team",
     ],
-    path: "/workshop/session-1/design-principles",
+    path: "/workshop/session-4/roadmap-builder",
   },
 ];
 
-export default function Session1Page() {
-  const futureHeadlines = useFutureHeadlines();
-  const opportunities = useOpportunities();
-  const designPrinciples = useDesignPrinciples();
+export default function Session4Page() {
+  const pilotPlans = usePilotPlans();
+  const roadmapMilestones = useRoadmapMilestones();
 
   const getExerciseStatus = (id: string): "pending" | "in-progress" | "completed" => {
     switch (id) {
-      case "future-headlines":
-        return futureHeadlines.length > 0 ? "completed" : "pending";
-      case "opportunity-brainstorm":
-        return opportunities.length > 0 ? "completed" : "pending";
-      case "design-principles":
-        return designPrinciples.length > 0 ? "completed" : "pending";
+      case "pilot-plan":
+        return pilotPlans.length > 0 ? "completed" : "pending";
+      case "roadmap-builder":
+        return roadmapMilestones.length > 0 ? "completed" : "pending";
       default:
         return "pending";
     }
@@ -81,14 +66,13 @@ export default function Session1Page() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <span className="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider uppercase bg-[var(--color-accent)]/10 text-[var(--color-accent)] rounded">
-          Session 1 of 5
+        <span className="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider uppercase bg-[var(--color-accent-teal)]/10 text-[var(--color-accent-teal)] rounded">
+          Session 4 of 5
         </span>
-        <h1 className="text-3xl font-bold mb-4">Orientation & Shared Understanding</h1>
+        <h1 className="text-3xl font-bold mb-4">Create the 90-Day Roadmap</h1>
         <p className="text-[var(--color-text-muted)] text-lg">
-          The goal of this session is to build a common understanding of what Agentic AI
-          means for your organization, define your aspirations, and establish clear
-          boundaries.
+          Plan your pilot, define how you'll gather feedback, and create a 90-day timeline
+          from MVP to scaled solution.
         </p>
       </motion.div>
 
@@ -121,7 +105,7 @@ export default function Session1Page() {
               transition={{ delay: 0.1 + index * 0.1 }}
             >
               <Card
-                accent={status === "completed" ? "teal" : status === "in-progress" ? "yellow" : "none"}
+                accent={status === "completed" ? "teal" : status === "in-progress" ? "teal" : "none"}
                 hoverable
               >
                 <CardHeader>
@@ -134,7 +118,7 @@ export default function Session1Page() {
                             status === "completed"
                               ? "bg-[var(--color-accent-teal)]/20 text-[var(--color-accent-teal)]"
                               : status === "in-progress"
-                              ? "bg-[var(--color-accent)]/20 text-[var(--color-accent)]"
+                              ? "bg-[var(--color-accent-teal)]/20 text-[var(--color-accent-teal)]"
                               : "bg-[var(--color-surface)] text-[var(--color-text-muted)]"
                           }
                         `}
@@ -172,7 +156,7 @@ export default function Session1Page() {
                     <ul className="space-y-2">
                       {exercise.tips.map((tip, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-[var(--color-text-body)]">
-                          <Circle className="w-1.5 h-1.5 mt-2 flex-shrink-0 fill-[var(--color-accent)]" />
+                          <span className="w-1.5 h-1.5 mt-2 flex-shrink-0 rounded-full bg-[var(--color-accent-teal)]" />
                           {tip}
                         </li>
                       ))}
@@ -192,13 +176,15 @@ export default function Session1Page() {
         transition={{ delay: 0.5 }}
         className="mt-12 flex justify-between items-center"
       >
-        <Link href="/workshop">
-          <Button variant="ghost">Back to Overview</Button>
+        <Link href="/workshop/session-3">
+          <Button variant="ghost" leftIcon={<ArrowLeft className="w-4 h-4" />}>
+            Back to Session 3
+          </Button>
         </Link>
         {completedCount === exercises.length && (
-          <Link href="/workshop/session-2">
+          <Link href="/workshop/session-5">
             <Button variant="primary" rightIcon={<ArrowRight className="w-4 h-4" />}>
-              Continue to Session 2
+              Continue to Session 5
             </Button>
           </Link>
         )}

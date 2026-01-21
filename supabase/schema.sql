@@ -102,6 +102,51 @@ CREATE TABLE IF NOT EXISTS raci_entries (
   role_assignments JSONB DEFAULT '{}'
 );
 
+-- Session 5: Scaling Checklist
+CREATE TABLE IF NOT EXISTS scaling_checklist (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  org_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  category TEXT NOT NULL CHECK (category IN ('documentation', 'training', 'ownership', 'feedback', 'metrics')),
+  item TEXT NOT NULL,
+  completed BOOLEAN DEFAULT FALSE,
+  notes TEXT DEFAULT '',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Session 5: Training Plans
+CREATE TABLE IF NOT EXISTS training_plans (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  org_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  role TEXT NOT NULL,
+  training_needs TEXT[] DEFAULT '{}',
+  resources TEXT[] DEFAULT '{}',
+  champion TEXT DEFAULT '',
+  target_date TEXT DEFAULT '',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Session 5: Lessons Learned
+CREATE TABLE IF NOT EXISTS lessons_learned (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  org_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  category TEXT NOT NULL CHECK (category IN ('success', 'challenge', 'surprise', 'recommendation')),
+  description TEXT NOT NULL,
+  applicable_to TEXT[] DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Session 5: Next Opportunities
+CREATE TABLE IF NOT EXISTS next_opportunities (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  org_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  domain TEXT NOT NULL,
+  pattern_to_reuse TEXT DEFAULT '',
+  estimated_value TEXT DEFAULT 'medium' CHECK (estimated_value IN ('low', 'medium', 'high')),
+  priority INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Create indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_future_headlines_org ON future_headlines(org_id);
 CREATE INDEX IF NOT EXISTS idx_opportunities_org ON opportunities(org_id);
@@ -111,6 +156,10 @@ CREATE INDEX IF NOT EXISTS idx_scored_opportunities_org ON scored_opportunities(
 CREATE INDEX IF NOT EXISTS idx_pilots_org ON pilots(org_id);
 CREATE INDEX IF NOT EXISTS idx_roadmap_milestones_org ON roadmap_milestones(org_id);
 CREATE INDEX IF NOT EXISTS idx_raci_entries_org ON raci_entries(org_id);
+CREATE INDEX IF NOT EXISTS idx_scaling_checklist_org ON scaling_checklist(org_id);
+CREATE INDEX IF NOT EXISTS idx_training_plans_org ON training_plans(org_id);
+CREATE INDEX IF NOT EXISTS idx_lessons_learned_org ON lessons_learned(org_id);
+CREATE INDEX IF NOT EXISTS idx_next_opportunities_org ON next_opportunities(org_id);
 
 -- Enable Row Level Security (RLS)
 ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;
@@ -122,6 +171,10 @@ ALTER TABLE scored_opportunities ENABLE ROW LEVEL SECURITY;
 ALTER TABLE pilots ENABLE ROW LEVEL SECURITY;
 ALTER TABLE roadmap_milestones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE raci_entries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE scaling_checklist ENABLE ROW LEVEL SECURITY;
+ALTER TABLE training_plans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE lessons_learned ENABLE ROW LEVEL SECURITY;
+ALTER TABLE next_opportunities ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for anonymous access (for MVP - tighten later with auth)
 -- In production, you'd want proper authentication
@@ -135,6 +188,10 @@ CREATE POLICY "Allow all operations on scored_opportunities" ON scored_opportuni
 CREATE POLICY "Allow all operations on pilots" ON pilots FOR ALL USING (true);
 CREATE POLICY "Allow all operations on roadmap_milestones" ON roadmap_milestones FOR ALL USING (true);
 CREATE POLICY "Allow all operations on raci_entries" ON raci_entries FOR ALL USING (true);
+CREATE POLICY "Allow all operations on scaling_checklist" ON scaling_checklist FOR ALL USING (true);
+CREATE POLICY "Allow all operations on training_plans" ON training_plans FOR ALL USING (true);
+CREATE POLICY "Allow all operations on lessons_learned" ON lessons_learned FOR ALL USING (true);
+CREATE POLICY "Allow all operations on next_opportunities" ON next_opportunities FOR ALL USING (true);
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()

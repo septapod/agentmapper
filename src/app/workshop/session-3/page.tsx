@@ -2,70 +2,37 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Lightbulb, Target, Shield, CheckCircle2, Circle } from "lucide-react";
+import { ArrowRight, ArrowLeft, Wrench, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StepProgress } from "@/components/ui/ProgressBar";
-import { useFutureHeadlines, useOpportunities, useDesignPrinciples } from "@/store/workshop";
+import { useMVPSpecs } from "@/store/workshop";
 
 const exercises = [
   {
-    id: "future-headlines",
-    title: "Future Headlines",
-    icon: <Lightbulb className="w-5 h-5" />,
+    id: "mvp-spec",
+    title: "MVP Specification",
+    icon: <Wrench className="w-5 h-5" />,
     description:
-      "Imagine it's 2-3 years from now. What headlines would you want to read about your organization's AI journey? This exercise helps align on aspirations and vision.",
+      "Design the smallest useful version of your solution. Define scope, tools, human checkpoints, and success criteria for a 2-week prototype.",
     duration: "30-45 min",
     tips: [
-      "Think bold - don't limit yourself to what seems possible today",
-      "Consider headlines about member experience, employee satisfaction, and business results",
-      "Include both opportunities and risks you've successfully navigated",
+      "Start with the simplest thing that could work",
+      "Use tools you already have (Claude, Copilot, etc.)",
+      "Define clear human-in-loop checkpoints",
+      "'Works for 80% of cases' is a great first milestone",
     ],
-    path: "/workshop/session-1/future-headlines",
-  },
-  {
-    id: "opportunity-brainstorm",
-    title: "Opportunity Brainstorm",
-    icon: <Target className="w-5 h-5" />,
-    description:
-      "Capture initial ideas about where Agentic AI could help across your organization. We'll refine and prioritize these in Session 2.",
-    duration: "45-60 min",
-    tips: [
-      "Focus on friction points and pain points first",
-      "Consider both member-facing and back-office processes",
-      "Don't worry about feasibility yet - that comes later",
-    ],
-    path: "/workshop/session-1/opportunity-brainstorm",
-  },
-  {
-    id: "design-principles",
-    title: "Design Principles & Guardrails",
-    icon: <Shield className="w-5 h-5" />,
-    description:
-      "Define the hard boundaries that must never be crossed (guardrails) and the aspirational principles that should guide your AI implementation.",
-    duration: "30-45 min",
-    tips: [
-      "Guardrails are non-negotiable - violations should trigger immediate escalation",
-      "Principles are aspirational goals that guide decision-making",
-      "Consider member trust, employee empowerment, and regulatory compliance",
-    ],
-    path: "/workshop/session-1/design-principles",
+    path: "/workshop/session-3/mvp-spec",
   },
 ];
 
-export default function Session1Page() {
-  const futureHeadlines = useFutureHeadlines();
-  const opportunities = useOpportunities();
-  const designPrinciples = useDesignPrinciples();
+export default function Session3Page() {
+  const mvpSpecs = useMVPSpecs();
 
   const getExerciseStatus = (id: string): "pending" | "in-progress" | "completed" => {
     switch (id) {
-      case "future-headlines":
-        return futureHeadlines.length > 0 ? "completed" : "pending";
-      case "opportunity-brainstorm":
-        return opportunities.length > 0 ? "completed" : "pending";
-      case "design-principles":
-        return designPrinciples.length > 0 ? "completed" : "pending";
+      case "mvp-spec":
+        return mvpSpecs.length > 0 ? "completed" : "pending";
       default:
         return "pending";
     }
@@ -81,14 +48,13 @@ export default function Session1Page() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <span className="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider uppercase bg-[var(--color-accent)]/10 text-[var(--color-accent)] rounded">
-          Session 1 of 5
+        <span className="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider uppercase bg-[var(--color-accent-purple)]/10 text-[var(--color-accent-purple)] rounded">
+          Session 3 of 5
         </span>
-        <h1 className="text-3xl font-bold mb-4">Orientation & Shared Understanding</h1>
+        <h1 className="text-3xl font-bold mb-4">Design the Pilot</h1>
         <p className="text-[var(--color-text-muted)] text-lg">
-          The goal of this session is to build a common understanding of what Agentic AI
-          means for your organization, define your aspirations, and establish clear
-          boundaries.
+          Organize the work and design your MVP. Define what you'll build, which tools you'll use,
+          where humans stay in the loop, and how you'll measure success.
         </p>
       </motion.div>
 
@@ -121,7 +87,7 @@ export default function Session1Page() {
               transition={{ delay: 0.1 + index * 0.1 }}
             >
               <Card
-                accent={status === "completed" ? "teal" : status === "in-progress" ? "yellow" : "none"}
+                accent={status === "completed" ? "teal" : status === "in-progress" ? "purple" : "none"}
                 hoverable
               >
                 <CardHeader>
@@ -134,7 +100,7 @@ export default function Session1Page() {
                             status === "completed"
                               ? "bg-[var(--color-accent-teal)]/20 text-[var(--color-accent-teal)]"
                               : status === "in-progress"
-                              ? "bg-[var(--color-accent)]/20 text-[var(--color-accent)]"
+                              ? "bg-[var(--color-accent-purple)]/20 text-[var(--color-accent-purple)]"
                               : "bg-[var(--color-surface)] text-[var(--color-text-muted)]"
                           }
                         `}
@@ -172,7 +138,7 @@ export default function Session1Page() {
                     <ul className="space-y-2">
                       {exercise.tips.map((tip, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-[var(--color-text-body)]">
-                          <Circle className="w-1.5 h-1.5 mt-2 flex-shrink-0 fill-[var(--color-accent)]" />
+                          <span className="w-1.5 h-1.5 mt-2 flex-shrink-0 rounded-full bg-[var(--color-accent-purple)]" />
                           {tip}
                         </li>
                       ))}
@@ -192,13 +158,15 @@ export default function Session1Page() {
         transition={{ delay: 0.5 }}
         className="mt-12 flex justify-between items-center"
       >
-        <Link href="/workshop">
-          <Button variant="ghost">Back to Overview</Button>
+        <Link href="/workshop/session-2">
+          <Button variant="ghost" leftIcon={<ArrowLeft className="w-4 h-4" />}>
+            Back to Session 2
+          </Button>
         </Link>
         {completedCount === exercises.length && (
-          <Link href="/workshop/session-2">
+          <Link href="/workshop/session-4">
             <Button variant="primary" rightIcon={<ArrowRight className="w-4 h-4" />}>
-              Continue to Session 2
+              Continue to Session 4
             </Button>
           </Link>
         )}

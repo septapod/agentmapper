@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat, Karla } from "next/font/google";
 import "./globals.css";
+import { Footer } from "@/components/ui/Footer";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -43,6 +44,7 @@ export default function RootLayout({
         }}
       >
         {children}
+        <Footer />
       </body>
     </html>
   );

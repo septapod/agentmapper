@@ -7,9 +7,13 @@ import type {
   DesignPrinciple,
   FrictionPoint,
   ScoredOpportunity,
-  Pilot,
+  MVPSpec,
+  PilotPlan,
   RoadmapMilestone,
-  RACIEntry,
+  ScalingChecklistItem,
+  TrainingPlanEntry,
+  LessonLearned,
+  NextOpportunity,
   WorkshopState,
 } from "@/types/workshop";
 import { db, isSupabaseConfigured } from "@/lib/supabase";
@@ -59,20 +63,40 @@ interface WorkshopActions {
   voteForOpportunity: (id: string) => void;
   togglePilotSelection: (id: string) => void;
 
-  // Session 3 - Pilots
-  addPilot: (pilot: Omit<Pilot, "id">) => void;
-  updatePilot: (id: string, updates: Partial<Pilot>) => void;
-  deletePilot: (id: string) => void;
+  // Session 3 - MVP Specs
+  addMVPSpec: (spec: Omit<MVPSpec, "id" | "createdAt">) => void;
+  updateMVPSpec: (id: string, updates: Partial<MVPSpec>) => void;
+  deleteMVPSpec: (id: string) => void;
+
+  // Session 4 - Pilot Plans
+  addPilotPlan: (plan: Omit<PilotPlan, "id" | "createdAt">) => void;
+  updatePilotPlan: (id: string, updates: Partial<PilotPlan>) => void;
+  deletePilotPlan: (id: string) => void;
 
   // Session 4 - Roadmap
-  addRoadmapMilestone: (milestone: Omit<RoadmapMilestone, "id">) => void;
+  addRoadmapMilestone: (milestone: Omit<RoadmapMilestone, "id" | "createdAt">) => void;
   updateRoadmapMilestone: (id: string, updates: Partial<RoadmapMilestone>) => void;
   deleteRoadmapMilestone: (id: string) => void;
 
-  // Session 4 - RACI
-  addRACIEntry: (entry: Omit<RACIEntry, "id">) => void;
-  updateRACIEntry: (id: string, updates: Partial<RACIEntry>) => void;
-  deleteRACIEntry: (id: string) => void;
+  // Session 5 - Scaling Checklist
+  addScalingChecklistItem: (item: Omit<ScalingChecklistItem, "id" | "createdAt">) => void;
+  updateScalingChecklistItem: (id: string, updates: Partial<ScalingChecklistItem>) => void;
+  deleteScalingChecklistItem: (id: string) => void;
+
+  // Session 5 - Training Plan
+  addTrainingPlanEntry: (entry: Omit<TrainingPlanEntry, "id" | "createdAt">) => void;
+  updateTrainingPlanEntry: (id: string, updates: Partial<TrainingPlanEntry>) => void;
+  deleteTrainingPlanEntry: (id: string) => void;
+
+  // Session 5 - Lessons Learned
+  addLessonLearned: (lesson: Omit<LessonLearned, "id" | "createdAt">) => void;
+  updateLessonLearned: (id: string, updates: Partial<LessonLearned>) => void;
+  deleteLessonLearned: (id: string) => void;
+
+  // Session 5 - Next Opportunities
+  addNextOpportunity: (opportunity: Omit<NextOpportunity, "id" | "createdAt">) => void;
+  updateNextOpportunity: (id: string, updates: Partial<NextOpportunity>) => void;
+  deleteNextOpportunity: (id: string) => void;
 
   // Meta
   markDirty: () => void;
@@ -111,11 +135,17 @@ const initialState: WorkshopState & CloudState = {
   scoredOpportunities: [],
 
   // Session 3
-  pilots: [],
+  mvpSpecs: [],
 
   // Session 4
+  pilotPlans: [],
   roadmapMilestones: [],
-  raciEntries: [],
+
+  // Session 5 - Empower Teams
+  scalingChecklist: [],
+  trainingPlan: [],
+  lessonsLearned: [],
+  nextOpportunities: [],
 
   // Meta
   isDirty: false,
@@ -295,24 +325,51 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
           isDirty: true,
         })),
 
-      // Session 3 - Pilots
-      addPilot: (pilot) =>
+      // Session 3 - MVP Specs
+      addMVPSpec: (spec) =>
         set((state) => ({
-          pilots: [...state.pilots, { ...pilot, id: generateId() }],
+          mvpSpecs: [
+            ...state.mvpSpecs,
+            { ...spec, id: generateId(), createdAt: new Date().toISOString() },
+          ],
           isDirty: true,
         })),
 
-      updatePilot: (id, updates) =>
+      updateMVPSpec: (id, updates) =>
         set((state) => ({
-          pilots: state.pilots.map((p) =>
+          mvpSpecs: state.mvpSpecs.map((s) =>
+            s.id === id ? { ...s, ...updates } : s
+          ),
+          isDirty: true,
+        })),
+
+      deleteMVPSpec: (id) =>
+        set((state) => ({
+          mvpSpecs: state.mvpSpecs.filter((s) => s.id !== id),
+          isDirty: true,
+        })),
+
+      // Session 4 - Pilot Plans
+      addPilotPlan: (plan) =>
+        set((state) => ({
+          pilotPlans: [
+            ...state.pilotPlans,
+            { ...plan, id: generateId(), createdAt: new Date().toISOString() },
+          ],
+          isDirty: true,
+        })),
+
+      updatePilotPlan: (id, updates) =>
+        set((state) => ({
+          pilotPlans: state.pilotPlans.map((p) =>
             p.id === id ? { ...p, ...updates } : p
           ),
           isDirty: true,
         })),
 
-      deletePilot: (id) =>
+      deletePilotPlan: (id) =>
         set((state) => ({
-          pilots: state.pilots.filter((p) => p.id !== id),
+          pilotPlans: state.pilotPlans.filter((p) => p.id !== id),
           isDirty: true,
         })),
 
@@ -321,7 +378,7 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
         set((state) => ({
           roadmapMilestones: [
             ...state.roadmapMilestones,
-            { ...milestone, id: generateId() },
+            { ...milestone, id: generateId(), createdAt: new Date().toISOString() },
           ],
           isDirty: true,
         })),
@@ -340,24 +397,99 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
           isDirty: true,
         })),
 
-      // Session 4 - RACI
-      addRACIEntry: (entry) =>
+      // Session 5 - Scaling Checklist
+      addScalingChecklistItem: (item) =>
         set((state) => ({
-          raciEntries: [...state.raciEntries, { ...entry, id: generateId() }],
+          scalingChecklist: [
+            ...state.scalingChecklist,
+            { ...item, id: generateId(), createdAt: new Date().toISOString() },
+          ],
           isDirty: true,
         })),
 
-      updateRACIEntry: (id, updates) =>
+      updateScalingChecklistItem: (id, updates) =>
         set((state) => ({
-          raciEntries: state.raciEntries.map((e) =>
+          scalingChecklist: state.scalingChecklist.map((i) =>
+            i.id === id ? { ...i, ...updates } : i
+          ),
+          isDirty: true,
+        })),
+
+      deleteScalingChecklistItem: (id) =>
+        set((state) => ({
+          scalingChecklist: state.scalingChecklist.filter((i) => i.id !== id),
+          isDirty: true,
+        })),
+
+      // Session 5 - Training Plan
+      addTrainingPlanEntry: (entry) =>
+        set((state) => ({
+          trainingPlan: [
+            ...state.trainingPlan,
+            { ...entry, id: generateId(), createdAt: new Date().toISOString() },
+          ],
+          isDirty: true,
+        })),
+
+      updateTrainingPlanEntry: (id, updates) =>
+        set((state) => ({
+          trainingPlan: state.trainingPlan.map((e) =>
             e.id === id ? { ...e, ...updates } : e
           ),
           isDirty: true,
         })),
 
-      deleteRACIEntry: (id) =>
+      deleteTrainingPlanEntry: (id) =>
         set((state) => ({
-          raciEntries: state.raciEntries.filter((e) => e.id !== id),
+          trainingPlan: state.trainingPlan.filter((e) => e.id !== id),
+          isDirty: true,
+        })),
+
+      // Session 5 - Lessons Learned
+      addLessonLearned: (lesson) =>
+        set((state) => ({
+          lessonsLearned: [
+            ...state.lessonsLearned,
+            { ...lesson, id: generateId(), createdAt: new Date().toISOString() },
+          ],
+          isDirty: true,
+        })),
+
+      updateLessonLearned: (id, updates) =>
+        set((state) => ({
+          lessonsLearned: state.lessonsLearned.map((l) =>
+            l.id === id ? { ...l, ...updates } : l
+          ),
+          isDirty: true,
+        })),
+
+      deleteLessonLearned: (id) =>
+        set((state) => ({
+          lessonsLearned: state.lessonsLearned.filter((l) => l.id !== id),
+          isDirty: true,
+        })),
+
+      // Session 5 - Next Opportunities
+      addNextOpportunity: (opportunity) =>
+        set((state) => ({
+          nextOpportunities: [
+            ...state.nextOpportunities,
+            { ...opportunity, id: generateId(), createdAt: new Date().toISOString() },
+          ],
+          isDirty: true,
+        })),
+
+      updateNextOpportunity: (id, updates) =>
+        set((state) => ({
+          nextOpportunities: state.nextOpportunities.map((o) =>
+            o.id === id ? { ...o, ...updates } : o
+          ),
+          isDirty: true,
+        })),
+
+      deleteNextOpportunity: (id) =>
+        set((state) => ({
+          nextOpportunities: state.nextOpportunities.filter((o) => o.id !== id),
           isDirty: true,
         })),
 
@@ -406,9 +538,9 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
             designPrinciples: state.designPrinciples,
             frictionPoints: state.frictionPoints,
             scoredOpportunities: state.scoredOpportunities,
-            pilots: state.pilots,
+            mvpSpecs: state.mvpSpecs,
+            pilotPlans: state.pilotPlans,
             roadmapMilestones: state.roadmapMilestones,
-            raciEntries: state.raciEntries,
           });
 
           return org.id;
@@ -438,9 +570,9 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
             designPrinciples: data.designPrinciples,
             frictionPoints: data.frictionPoints,
             scoredOpportunities: data.scoredOpportunities,
-            pilots: data.pilots as Pilot[],
+            mvpSpecs: data.mvpSpecs as MVPSpec[],
+            pilotPlans: data.pilotPlans as PilotPlan[],
             roadmapMilestones: data.roadmapMilestones,
-            raciEntries: data.raciEntries as RACIEntry[],
             currentSession: data.organization?.currentSession || 1,
             cloudOrgId: orgId,
             syncStatus: "idle",
@@ -476,9 +608,9 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
             designPrinciples: state.designPrinciples,
             frictionPoints: state.frictionPoints,
             scoredOpportunities: state.scoredOpportunities,
-            pilots: state.pilots,
+            mvpSpecs: state.mvpSpecs,
+            pilotPlans: state.pilotPlans,
             roadmapMilestones: state.roadmapMilestones,
-            raciEntries: state.raciEntries,
           });
 
           // Update organization in cloud
@@ -528,9 +660,14 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
         designPrinciples: state.designPrinciples,
         frictionPoints: state.frictionPoints,
         scoredOpportunities: state.scoredOpportunities,
-        pilots: state.pilots,
+        mvpSpecs: state.mvpSpecs,
+        pilotPlans: state.pilotPlans,
         roadmapMilestones: state.roadmapMilestones,
-        raciEntries: state.raciEntries,
+        // Session 5 - Empower Teams
+        scalingChecklist: state.scalingChecklist,
+        trainingPlan: state.trainingPlan,
+        lessonsLearned: state.lessonsLearned,
+        nextOpportunities: state.nextOpportunities,
         lastSaved: state.lastSaved,
         // Cloud sync state (persisted for reconnection)
         cloudOrgId: state.cloudOrgId,
@@ -548,9 +685,13 @@ export const useOpportunities = () => useWorkshopStore((state) => state.opportun
 export const useDesignPrinciples = () => useWorkshopStore((state) => state.designPrinciples);
 export const useFrictionPoints = () => useWorkshopStore((state) => state.frictionPoints);
 export const useScoredOpportunities = () => useWorkshopStore((state) => state.scoredOpportunities);
-export const usePilots = () => useWorkshopStore((state) => state.pilots);
+export const useMVPSpecs = () => useWorkshopStore((state) => state.mvpSpecs);
+export const usePilotPlans = () => useWorkshopStore((state) => state.pilotPlans);
 export const useRoadmapMilestones = () => useWorkshopStore((state) => state.roadmapMilestones);
-export const useRACIEntries = () => useWorkshopStore((state) => state.raciEntries);
+export const useScalingChecklist = () => useWorkshopStore((state) => state.scalingChecklist);
+export const useTrainingPlan = () => useWorkshopStore((state) => state.trainingPlan);
+export const useLessonsLearned = () => useWorkshopStore((state) => state.lessonsLearned);
+export const useNextOpportunities = () => useWorkshopStore((state) => state.nextOpportunities);
 export const useIsDirty = () => useWorkshopStore((state) => state.isDirty);
 
 // Cloud sync selectors

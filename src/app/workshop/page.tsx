@@ -35,27 +35,36 @@ const sessions = [
   },
   {
     number: 3,
-    title: "Organize the Work",
-    duration: "3-4 hours",
+    title: "Design the Pilot",
+    duration: "30-45 min",
     description:
-      "Match agentic patterns to opportunities, design future-state workflows, assess risks using NIST AI RMF, and create your MVP pilot charter.",
+      "Organize the work and design your MVP. Define what you'll build, which tools you'll use, where humans stay in the loop, and how you'll measure success.",
     exercises: [
-      { id: "pattern-matching", title: "Pattern Matching", description: "Identify which agentic pattern fits each opportunity" },
-      { id: "future-state-workflow", title: "Workflow Design", description: "Design the future-state agentic workflow" },
-      { id: "risk-governance", title: "Risk Assessment", description: "Score risks across NIST AI RMF dimensions" },
-      { id: "mvp-charter", title: "MVP Charter", description: "Create a one-page pilot charter document" },
+      { id: "mvp-spec", title: "MVP Specification", description: "Design the smallest useful version of your solution" },
     ],
   },
   {
     number: 4,
-    title: "Roadmap & Governance",
+    title: "Create the 90-Day Roadmap",
+    duration: "1 hour",
+    description:
+      "Plan your pilot, define how you'll gather feedback, and create a 90-day timeline from MVP to scaled solution.",
+    exercises: [
+      { id: "pilot-plan", title: "Pilot Plan", description: "Define test users, metrics, duration, and stop criteria" },
+      { id: "roadmap-builder", title: "90-Day Roadmap", description: "Create your implementation timeline with clear milestones" },
+    ],
+  },
+  {
+    number: 5,
+    title: "Empower Teams",
     duration: "2-3 hours",
     description:
-      "Build a detailed 90-day implementation roadmap, define roles and responsibilities with RACI, and establish your governance framework.",
+      "Scale what works across the organization. Document learnings, train staff, establish ownership, and identify the next opportunities for AI-enabled transformation.",
     exercises: [
-      { id: "roadmap-builder", title: "90-Day Roadmap", description: "Plan milestones, owners, and dependencies" },
-      { id: "raci-matrix", title: "RACI Matrix", description: "Define who is Responsible, Accountable, Consulted, Informed" },
-      { id: "governance", title: "Governance Setup", description: "Establish escalation and review procedures" },
+      { id: "scaling-checklist", title: "Scaling Checklist", description: "Verify readiness to scale: documentation, training, ownership" },
+      { id: "training-plan", title: "Training Plan", description: "Define role-based training needs and identify champions" },
+      { id: "lessons-learned", title: "Lessons Learned", description: "Capture what worked, what didn't, and recommendations" },
+      { id: "next-opportunities", title: "Next Opportunities", description: "Identify patterns to reuse for new friction areas" },
     ],
   },
 ];

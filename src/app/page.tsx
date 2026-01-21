@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Sparkles, Target, Users, Shield, Cloud, Download } from "lucide-react";
+import { ArrowRight, Sparkles, Target, Users, Shield, Cloud, Download, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -96,6 +96,12 @@ export default function Home() {
       title: "Generate Feedback",
       description: "Run structured pilots, validate performance, and iterate",
       accent: "yellow",
+    },
+    {
+      icon: <Rocket className="w-6 h-6" />,
+      title: "Empower Teams",
+      description: "Scale what works and build capability across the organization",
+      accent: "coral",
     },
   ];
 
@@ -286,7 +292,7 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
             {phases.map((phase, index) => (
               <motion.div
                 key={phase.title}
@@ -332,11 +338,11 @@ export default function Home() {
             viewport={{ once: true }}
           >
             <h2 className="font-[var(--font-display)] mb-4">
-              Four Sessions to <span className="text-[var(--color-accent-coral)]">Transformation</span>
+              Five Sessions to <span className="text-[var(--color-accent-coral)]">Transformation</span>
             </h2>
             <p className="text-[var(--color-text-muted)] max-w-2xl mx-auto">
               Each session builds on the last, taking you from shared understanding
-              to a concrete 90-day implementation roadmap.
+              to scaled organizational capability.
             </p>
           </motion.div>
 
@@ -373,6 +379,14 @@ export default function Home() {
                 description:
                   "Build a detailed 90-day roadmap, define roles with RACI, and establish governance guidelines.",
                 exercises: ["Roadmap Builder", "RACI Matrix", "Governance Setup", "Commitments"],
+              },
+              {
+                number: 5,
+                title: "Empower Teams",
+                duration: "2-3 hours",
+                description:
+                  "Scale what works, document learnings, train staff, and identify the next opportunities for AI-enabled transformation.",
+                exercises: ["Scaling Checklist", "Training Plan", "Lessons Learned", "Next Opportunities"],
               },
             ].map((session, index) => (
               <motion.div

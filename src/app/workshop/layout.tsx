@@ -49,6 +49,16 @@ const sessions = [
       { id: "governance", title: "Governance" },
     ],
   },
+  {
+    number: 5,
+    title: "Empower Teams",
+    exercises: [
+      { id: "scaling-checklist", title: "Scaling Checklist" },
+      { id: "training-plan", title: "Training Plan" },
+      { id: "lessons-learned", title: "Lessons Learned" },
+      { id: "next-opportunities", title: "Next Opportunities" },
+    ],
+  },
 ];
 
 export default function WorkshopLayout({

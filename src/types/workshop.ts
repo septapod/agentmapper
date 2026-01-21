@@ -35,11 +35,9 @@ export interface DesignPrinciple {
 // Session 2 Types
 export interface FrictionPoint {
   id: string;
-  processArea: string;
-  description: string;
-  impactLevel: 1 | 2 | 3 | 4 | 5;
-  frequency: "daily" | "weekly" | "monthly" | "quarterly";
-  affectedRoles: string[];
+  processArea: string;        // Free text - what area of work?
+  description: string;         // Free text - describe the friction
+  priority?: "high" | "medium" | "low";  // Optional priority for ranking
   createdAt: string;
 }
 
@@ -55,71 +53,77 @@ export interface ScoredOpportunity {
   selectedForPilot: boolean;
 }
 
-// Session 3 Types
-export type AgenticPattern = "copilot" | "autonomous" | "crew";
-
-export interface WorkflowStep {
+// Session 3 Types - Design the Pilot
+export interface MVPSpec {
   id: string;
-  stepNumber: number;
-  description: string;
-  currentOwner: string;
-  canAgentDo: "yes" | "no" | "assist";
-  humanInTheLoop: boolean;
-  notes: string;
+  frictionPointId: string;        // Links to selected friction point
+  scope: string;                   // Free text: what are we building?
+  toolsToUse: string[];            // e.g., ["Claude", "Copilot", "Excel"]
+  humanCheckpoints: string[];      // Where does human stay in loop?
+  successThreshold: string;        // e.g., "Works for 80% of cases"
+  timeframe: string;               // e.g., "2 weeks"
+  createdAt: string;
 }
 
-export interface RiskScore {
-  govern: number;
-  map: number;
-  measure: number;
-  manage: number;
-}
-
-export interface Pilot {
+// Session 4 Types - Create the 90-Day Roadmap
+export interface PilotPlan {
   id: string;
-  opportunityId: string;
-  aiPattern: AgenticPattern;
-  workflowCurrent: WorkflowStep[];
-  workflowFuture: WorkflowStep[];
-  riskScores: RiskScore;
-  charterData: PilotCharter;
+  mvpSpecId: string;               // Links to MVP spec
+  testUsers: string[];             // Who will test? (2-3 names)
+  metricsToTrack: string[];        // What will we measure?
+  duration: string;                // e.g., "4 weeks"
+  stopCriteria: string[];          // What would make us stop?
+  createdAt: string;
 }
 
-export interface PilotCharter {
-  problemStatement: string;
-  successCriteria: string[];
-  riskTier: "low" | "medium" | "high";
-  initialAutonomyBoundary: string;
-  teamMembers: {
-    productOwner: string;
-    technicalLead: string;
-    riskCompliance: string;
-  };
-}
-
-// Session 4 Types
 export interface RoadmapMilestone {
   id: string;
-  pilotId: string;
-  title: string;
-  weekNumber: number;
-  owner: string;
-  deliverable: string;
-  dependencies: string[];
-  status: "not-started" | "in-progress" | "completed";
+  pilotPlanId: string;
+  weekStart: number;               // 1-12
+  weekEnd: number;                 // 1-12
+  activity: string;                // What happens?
+  owner: string;                   // Who owns it?
+  successCriteria: string;         // How do we know it worked?
+  phase: "build" | "pilot" | "refine" | "scale";
+  createdAt: string;
 }
 
-export interface RACIEntry {
+// Session 5 Types - Empower Teams
+export interface ScalingChecklistItem {
   id: string;
-  activity: string;
-  roleAssignments: {
-    executiveSponsor: "R" | "A" | "C" | "I" | "";
-    aiCoE: "R" | "A" | "C" | "I" | "";
-    productOwner: "R" | "A" | "C" | "I" | "";
-    technicalLead: "R" | "A" | "C" | "I" | "";
-    riskCompliance: "R" | "A" | "C" | "I" | "";
-    infoSec: "R" | "A" | "C" | "I" | "";
-  };
+  category: "documentation" | "training" | "ownership" | "feedback" | "metrics";
+  item: string;
+  completed: boolean;
+  notes: string;
+  createdAt: string;
+}
+
+export interface TrainingPlanEntry {
+  id: string;
+  role: string;
+  trainingNeeds: string[];
+  resources: string[];
+  champion: string;
+  targetDate: string;
+  createdAt: string;
+}
+
+export interface LessonLearned {
+  id: string;
+  category: "success" | "challenge" | "surprise" | "recommendation";
+  description: string;
+  applicableTo: string[];
+  createdAt: string;
+}
+
+export interface NextOpportunity {
+  id: string;
+  title: string;
+  domain: string;
+  patternToReuse: string;
+  estimatedValue: "low" | "medium" | "high";
+  priority: number;
+  createdAt: string;
 }
 
 // Workshop State
@@ -136,12 +140,18 @@ export interface WorkshopState {
   frictionPoints: FrictionPoint[];
   scoredOpportunities: ScoredOpportunity[];
 
-  // Session 3
-  pilots: Pilot[];
+  // Session 3 - Design the Pilot
+  mvpSpecs: MVPSpec[];
 
-  // Session 4
+  // Session 4 - Create the Roadmap
+  pilotPlans: PilotPlan[];
   roadmapMilestones: RoadmapMilestone[];
-  raciEntries: RACIEntry[];
+
+  // Session 5 - Empower Teams
+  scalingChecklist: ScalingChecklistItem[];
+  trainingPlan: TrainingPlanEntry[];
+  lessonsLearned: LessonLearned[];
+  nextOpportunities: NextOpportunity[];
 
   // Meta
   isDirty: boolean;

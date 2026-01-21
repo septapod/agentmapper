@@ -9,9 +9,7 @@ import {
   Plus,
   Trash2,
   Map,
-  AlertCircle,
   Lightbulb,
-  Users,
   Zap,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -25,64 +23,26 @@ import {
 } from "@/store/workshop";
 import type { FrictionPoint } from "@/types/workshop";
 
-const processAreas = [
-  "Member Services",
-  "Lending",
-  "Collections",
-  "Contact Center",
-  "Back Office",
-  "Compliance",
-  "Marketing",
-  "HR/Internal",
-  "IT Operations",
-  "Onboarding",
-  "Fraud Prevention",
-  "Other",
-];
-
-const frequencies = [
-  { value: "daily", label: "Daily", color: "coral" },
-  { value: "weekly", label: "Weekly", color: "yellow" },
-  { value: "monthly", label: "Monthly", color: "teal" },
-  { value: "quarterly", label: "Quarterly", color: "yellow" },
-] as const;
-
-const impactLevels = [
-  { value: 1, label: "Minimal", description: "Minor inconvenience" },
-  { value: 2, label: "Low", description: "Noticeable inefficiency" },
-  { value: 3, label: "Medium", description: "Significant time/effort waste" },
-  { value: 4, label: "High", description: "Major pain point" },
-  { value: 5, label: "Critical", description: "Severe impact on operations" },
-] as const;
-
 const exampleFrictions = [
   {
     processArea: "Lending",
     description: "Loan officers spend 30+ minutes manually reviewing and keying in data from income documents (pay stubs, tax returns) into the LOS",
-    impactLevel: 4 as const,
-    frequency: "daily" as const,
-    affectedRoles: ["Loan Officers", "Underwriters"],
+    priority: "high" as const,
   },
   {
     processArea: "Contact Center",
     description: "Agents must toggle between 5+ systems to answer basic member questions, leading to long hold times and frustrated members",
-    impactLevel: 5 as const,
-    frequency: "daily" as const,
-    affectedRoles: ["Contact Center Agents", "Members"],
+    priority: "high" as const,
   },
   {
     processArea: "Collections",
     description: "Manual outreach calls follow a static schedule rather than being timed for when members are most likely to respond",
-    impactLevel: 3 as const,
-    frequency: "daily" as const,
-    affectedRoles: ["Collections Specialists"],
+    priority: "medium" as const,
   },
   {
     processArea: "Onboarding",
     description: "New members often abandon the account opening process due to lengthy identity verification steps",
-    impactLevel: 4 as const,
-    frequency: "weekly" as const,
-    affectedRoles: ["New Members", "MSRs"],
+    priority: "high" as const,
   },
 ];
 
@@ -91,26 +51,23 @@ export default function FrictionMapPage() {
   const opportunities = useOpportunities();
   const { addFrictionPoint, deleteFrictionPoint } = useWorkshopStore();
 
-  const [processArea, setProcessArea] = useState("Member Services");
+  const [processArea, setProcessArea] = useState("");
   const [description, setDescription] = useState("");
-  const [impactLevel, setImpactLevel] = useState<1 | 2 | 3 | 4 | 5>(3);
-  const [frequency, setFrequency] = useState<"daily" | "weekly" | "monthly" | "quarterly">("daily");
-  const [affectedRoles, setAffectedRoles] = useState("");
+  const [priority, setPriority] = useState<"high" | "medium" | "low" | undefined>(undefined);
   const [showExamples, setShowExamples] = useState(true);
 
   const handleAdd = () => {
-    if (!description.trim()) return;
+    if (!processArea.trim() || !description.trim()) return;
 
     addFrictionPoint({
-      processArea,
+      processArea: processArea.trim(),
       description: description.trim(),
-      impactLevel,
-      frequency,
-      affectedRoles: affectedRoles.split(",").map(r => r.trim()).filter(Boolean),
+      priority,
     });
 
+    setProcessArea("");
     setDescription("");
-    setAffectedRoles("");
+    setPriority(undefined);
   };
 
   const groupedFrictions = frictionPoints.reduce((acc, fp) => {
@@ -119,15 +76,11 @@ export default function FrictionMapPage() {
     return acc;
   }, {} as Record<string, FrictionPoint[]>);
 
-  const getImpactColor = (level: number) => {
-    if (level >= 4) return "text-[var(--color-accent-coral)]";
-    if (level >= 3) return "text-[var(--color-accent)]";
-    return "text-[var(--color-text-muted)]";
-  };
-
-  const getFrequencyBadge = (freq: string) => {
-    const f = frequencies.find(f => f.value === freq);
-    return f ? f.color : "yellow";
+  const getPriorityColor = (p?: string) => {
+    if (p === "high") return "coral";
+    if (p === "medium") return "yellow";
+    if (p === "low") return "teal";
+    return "default";
   };
 
   return (
@@ -164,33 +117,32 @@ export default function FrictionMapPage() {
         transition={{ delay: 0.1 }}
         className="mb-8"
       >
-        <Card accent="coral" hoverable={false}>
+        <Card variant="info" hoverable={false}>
           <CardHeader>
             <CardTitle as="h2" className="flex items-center gap-2">
               <Lightbulb className="w-5 h-5 text-[var(--color-accent)]" />
-              Instructions
+              FORGE Questions
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-[var(--color-text-body)] mb-4">
-              Map friction points across your processes. Think about where time is wasted,
-              errors occur, handoffs fail, or members experience frustration.
+            <p className="text-[var(--color-text-body)] mb-4 font-medium">
+              Where do people say "I wish I didn't have to..."?
             </p>
             <div className="grid md:grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="font-semibold text-[var(--color-text)] mb-2">Look for:</p>
                 <ul className="space-y-1 text-[var(--color-text-muted)]">
-                  <li>• Manual data entry and re-keying</li>
-                  <li>• Waiting for approvals or handoffs</li>
-                  <li>• System switching and context loss</li>
-                  <li>• Error-prone steps requiring rework</li>
+                  <li>• Work that's repetitive and time-consuming</li>
+                  <li>• Tasks where errors happen because humans get tired</li>
+                  <li>• Processes that require switching between multiple systems</li>
+                  <li>• Steps where smart people get stuck on tedious work</li>
                 </ul>
               </div>
               <div>
                 <p className="font-semibold text-[var(--color-text)] mb-2">Goal:</p>
                 <p className="text-[var(--color-text-muted)]">
-                  Identify at least 5-8 friction points. High-frequency, high-impact
-                  frictions are your best candidates for AI-assisted improvement.
+                  Identify concrete friction points in plain language. Focus on describing the
+                  problem, not scoring or categorizing it.
                 </p>
               </div>
             </div>
@@ -243,25 +195,21 @@ export default function FrictionMapPage() {
                 onClick={() => {
                   setProcessArea(example.processArea);
                   setDescription(example.description);
-                  setImpactLevel(example.impactLevel);
-                  setFrequency(example.frequency);
-                  setAffectedRoles(example.affectedRoles.join(", "));
+                  setPriority(example.priority);
                 }}
                 whileHover={{ y: -2 }}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <Badge variant="default">{example.processArea}</Badge>
-                  <Badge variant={getFrequencyBadge(example.frequency) as any}>
-                    {example.frequency}
-                  </Badge>
+                  {example.priority && (
+                    <Badge color={getPriorityColor(example.priority) as any} size="sm">
+                      {example.priority}
+                    </Badge>
+                  )}
                 </div>
-                <p className="text-sm text-[var(--color-text)] mb-2">
-                  {example.description.slice(0, 100)}...
+                <p className="text-sm text-[var(--color-text)]">
+                  {example.description.slice(0, 120)}...
                 </p>
-                <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
-                  <AlertCircle className={`w-3 h-3 ${getImpactColor(example.impactLevel)}`} />
-                  Impact: {impactLevels.find(l => l.value === example.impactLevel)?.label}
-                </div>
               </motion.button>
             ))}
           </div>
@@ -279,110 +227,77 @@ export default function FrictionMapPage() {
           <CardContent>
             <div className="space-y-4">
               {/* Process Area */}
-              <div>
-                <label className="block mb-2 text-sm font-medium text-[var(--color-text)]">
-                  Process Area
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {processAreas.map((area) => (
-                    <button
-                      key={area}
-                      onClick={() => setProcessArea(area)}
-                      className={`
-                        px-3 py-2 text-sm font-medium rounded-lg border transition-colors
-                        ${
-                          processArea === area
-                            ? "bg-[var(--color-accent-coral)]/20 border-[var(--color-accent-coral)] text-[var(--color-accent-coral)]"
-                            : "border-white/[0.1] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
-                        }
-                      `}
-                    >
-                      {area}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <Input
+                label="Process Area"
+                placeholder="e.g., Lending, Contact Center, Collections, Back Office..."
+                value={processArea}
+                onChange={(e) => setProcessArea(e.target.value)}
+              />
 
               {/* Description */}
               <TextArea
                 label="Friction Description"
-                placeholder="Describe the friction point: What happens? Why is it painful? What triggers it?"
+                placeholder="Describe the friction point: What takes hours that should take minutes? Where do errors happen? What's repetitive and tedious?"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="min-h-[100px]"
               />
 
-              {/* Impact & Frequency */}
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--color-text)]">
-                    <AlertCircle className="w-4 h-4 inline mr-2" />
-                    Impact Level
-                  </label>
-                  <div className="space-y-2">
-                    {impactLevels.map((level) => (
-                      <button
-                        key={level.value}
-                        onClick={() => setImpactLevel(level.value as 1 | 2 | 3 | 4 | 5)}
-                        className={`
-                          w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg border transition-colors
-                          ${
-                            impactLevel === level.value
-                              ? "bg-[var(--color-accent-coral)]/20 border-[var(--color-accent-coral)] text-[var(--color-text)]"
-                              : "border-white/[0.1] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
-                          }
-                        `}
-                      >
-                        <span className="font-medium">{level.value}. {level.label}</span>
-                        <span className="text-xs opacity-60">{level.description}</span>
-                      </button>
-                    ))}
-                  </div>
+              {/* Priority (Optional) */}
+              <div>
+                <label className="block mb-2 text-sm font-medium text-[var(--color-text)]">
+                  Priority <span className="text-xs text-[var(--color-text-muted)]">(optional)</span>
+                </label>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setPriority(priority === "high" ? undefined : "high")}
+                    className={`
+                      flex-1 px-4 py-2 text-sm rounded-lg border transition-colors
+                      ${
+                        priority === "high"
+                          ? "bg-[var(--color-accent-coral)]/20 border-[var(--color-accent-coral)] text-[var(--color-accent-coral)]"
+                          : "border-white/[0.1] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-hover)]"
+                      }
+                    `}
+                  >
+                    High
+                  </button>
+                  <button
+                    onClick={() => setPriority(priority === "medium" ? undefined : "medium")}
+                    className={`
+                      flex-1 px-4 py-2 text-sm rounded-lg border transition-colors
+                      ${
+                        priority === "medium"
+                          ? "bg-[var(--color-accent)]/20 border-[var(--color-accent)] text-[var(--color-accent)]"
+                          : "border-white/[0.1] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-hover)]"
+                      }
+                    `}
+                  >
+                    Medium
+                  </button>
+                  <button
+                    onClick={() => setPriority(priority === "low" ? undefined : "low")}
+                    className={`
+                      flex-1 px-4 py-2 text-sm rounded-lg border transition-colors
+                      ${
+                        priority === "low"
+                          ? "bg-[var(--color-accent-teal)]/20 border-[var(--color-accent-teal)] text-[var(--color-accent-teal)]"
+                          : "border-white/[0.1] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-hover)]"
+                      }
+                    `}
+                  >
+                    Low
+                  </button>
                 </div>
-
-                <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--color-text)]">
-                    <Zap className="w-4 h-4 inline mr-2" />
-                    Frequency
-                  </label>
-                  <div className="space-y-2">
-                    {frequencies.map((freq) => (
-                      <button
-                        key={freq.value}
-                        onClick={() => setFrequency(freq.value)}
-                        className={`
-                          w-full px-3 py-2 text-sm font-medium rounded-lg border transition-colors text-left
-                          ${
-                            frequency === freq.value
-                              ? "bg-[var(--color-accent-coral)]/20 border-[var(--color-accent-coral)] text-[var(--color-text)]"
-                              : "border-white/[0.1] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
-                          }
-                        `}
-                      >
-                        {freq.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <p className="text-xs text-[var(--color-text-muted)] mt-2">
+                  Priority is optional - use it to help rank friction points if helpful
+                </p>
               </div>
-
-              {/* Affected Roles */}
-              <Input
-                label={
-                  <span className="flex items-center gap-2">
-                    <Users className="w-4 h-4" />
-                    Affected Roles (comma-separated)
-                  </span>
-                }
-                placeholder="e.g., Loan Officers, Members, Contact Center Agents"
-                value={affectedRoles}
-                onChange={(e) => setAffectedRoles(e.target.value)}
-              />
 
               <Button
                 variant="primary"
                 onClick={handleAdd}
-                disabled={!description.trim()}
+                disabled={!processArea.trim() || !description.trim()}
                 leftIcon={<Plus className="w-4 h-4" />}
                 className="w-full"
               >
@@ -435,21 +350,12 @@ export default function FrictionMapPage() {
                         <Card accent="coral" className="group">
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <Badge variant={getFrequencyBadge(fp.frequency) as any}>
-                                  {fp.frequency}
+                              {fp.priority && (
+                                <Badge color={getPriorityColor(fp.priority) as any} size="sm" className="mb-2">
+                                  {fp.priority} priority
                                 </Badge>
-                                <span className={`text-sm font-medium ${getImpactColor(fp.impactLevel)}`}>
-                                  Impact: {impactLevels.find(l => l.value === fp.impactLevel)?.label}
-                                </span>
-                              </div>
-                              <p className="text-[var(--color-text)] mb-2">{fp.description}</p>
-                              {fp.affectedRoles.length > 0 && (
-                                <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
-                                  <Users className="w-3 h-3" />
-                                  {fp.affectedRoles.join(", ")}
-                                </div>
                               )}
+                              <p className="text-[var(--color-text)]">{fp.description}</p>
                             </div>
                             <button
                               onClick={() => deleteFrictionPoint(fp.id)}
@@ -481,14 +387,16 @@ export default function FrictionMapPage() {
             Back to Session 2
           </Button>
         </Link>
-        <Link href="/workshop/session-2/opportunity-scoring">
-          <Button
-            variant="primary"
-            rightIcon={<ArrowRight className="w-4 h-4" />}
-          >
-            Next: Opportunity Scoring
-          </Button>
-        </Link>
+        {frictionPoints.length > 0 && (
+          <Link href="/workshop/session-3">
+            <Button
+              variant="primary"
+              rightIcon={<ArrowRight className="w-4 h-4" />}
+            >
+              Continue to Session 3
+            </Button>
+          </Link>
+        )}
       </motion.div>
     </div>
   );
