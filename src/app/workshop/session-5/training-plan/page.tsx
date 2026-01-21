@@ -113,7 +113,7 @@ export default function TrainingPlanPage() {
           </div>
         </div>
 
-        <Card variant="info" className="mt-6">
+        <Card className="mt-6">
           <CardContent className="flex items-start gap-3">
             <Lightbulb className="w-5 h-5 text-[var(--color-accent)] flex-shrink-0 mt-0.5" />
             <div className="text-sm">

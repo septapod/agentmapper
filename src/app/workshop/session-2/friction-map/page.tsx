@@ -117,7 +117,7 @@ export default function FrictionMapPage() {
         transition={{ delay: 0.1 }}
         className="mb-8"
       >
-        <Card variant="info" hoverable={false}>
+        <Card hoverable={false}>
           <CardHeader>
             <CardTitle as="h2" className="flex items-center gap-2">
               <Lightbulb className="w-5 h-5 text-[var(--color-accent)]" />

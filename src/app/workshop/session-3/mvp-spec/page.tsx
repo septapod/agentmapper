@@ -135,7 +135,7 @@ export default function MVPSpecPage() {
           </div>
         </div>
 
-        <Card variant="info" className="mt-6">
+        <Card className="mt-6">
           <CardContent className="flex items-start gap-3">
             <Lightbulb className="w-5 h-5 text-[var(--color-accent)] flex-shrink-0 mt-0.5" />
             <div className="text-sm">
@@ -166,7 +166,7 @@ export default function MVPSpecPage() {
                 Select Friction Point <span className="text-[var(--color-accent-coral)]">*</span>
               </label>
               {frictionPoints.length === 0 ? (
-                <Card variant="warning">
+                <Card accent="yellow">
                   <CardContent className="flex items-start gap-3">
                     <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
                     <div className="text-sm">
