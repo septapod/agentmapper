@@ -29,14 +29,12 @@ export function Footer() {
   }, []);
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 bg-[var(--color-bg)]/80 backdrop-blur-sm border-t border-[var(--color-border)] py-2 px-4 z-50">
-      <div className="max-w-7xl mx-auto text-left">
-        {currentTime && (
-          <p className="text-xs text-[var(--color-text-muted)]">
-            LAST UPDATED {currentTime} PT
-          </p>
-        )}
-      </div>
+    <footer className="border-t border-[var(--color-border)] py-4 px-8">
+      {currentTime && (
+        <p className="text-xs text-[var(--color-text-muted)]">
+          LAST UPDATED {currentTime} PT
+        </p>
+      )}
     </footer>
   );
 }
