@@ -21,11 +21,11 @@ import {
 } from "@/store/workshop";
 
 const categories = [
-  { value: "documentation", label: "Documentation", color: "purple" },
-  { value: "training", label: "Training", color: "teal" },
-  { value: "ownership", label: "Ownership", color: "coral" },
-  { value: "feedback", label: "Feedback", color: "yellow" },
-  { value: "metrics", label: "Metrics", color: "purple" },
+  { value: "documentation", label: "Documentation", color: "teal" },
+  { value: "training", label: "Training", color: "coral" },
+  { value: "ownership", label: "Ownership", color: "yellow" },
+  { value: "feedback", label: "Feedback", color: "teal" },
+  { value: "metrics", label: "Metrics", color: "coral" },
 ] as const;
 
 const suggestedItems = {
@@ -247,7 +247,7 @@ export default function ScalingChecklistPage() {
           cat.items.length > 0 && (
             <div key={cat.value}>
               <div className="flex items-center gap-2 mb-3">
-                <Badge color={cat.color as any}>{cat.label}</Badge>
+                <Badge variant={cat.color as any}>{cat.label}</Badge>
                 <span className="text-sm text-[var(--color-text-muted)]">
                   {cat.items.filter((i) => i.completed).length} / {cat.items.length} complete
                 </span>

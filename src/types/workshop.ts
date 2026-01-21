@@ -38,6 +38,9 @@ export interface FrictionPoint {
   processArea: string;        // Free text - what area of work?
   description: string;         // Free text - describe the friction
   priority?: "high" | "medium" | "low";  // Optional priority for ranking
+  impactLevel?: number;        // Optional impact level for sync
+  frequency?: string;          // Optional frequency for sync
+  affectedRoles?: string[];    // Optional affected roles for sync
   createdAt: string;
 }
 

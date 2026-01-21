@@ -26,8 +26,8 @@ import {
 const categories = [
   { value: "success", label: "Success", icon: CheckCircle2, color: "teal" },
   { value: "challenge", label: "Challenge", icon: AlertTriangle, color: "coral" },
-  { value: "surprise", label: "Surprise", icon: Sparkles, color: "purple" },
-  { value: "recommendation", label: "Recommendation", icon: MessageSquare, color: "yellow" },
+  { value: "surprise", label: "Surprise", icon: Sparkles, color: "yellow" },
+  { value: "recommendation", label: "Recommendation", icon: MessageSquare, color: "teal" },
 ] as const;
 
 export default function LessonsLearnedPage() {
@@ -109,7 +109,7 @@ export default function LessonsLearnedPage() {
             <div className="flex items-center gap-2 mb-3">
               <cat.icon className={`w-5 h-5 text-[var(--color-accent-${cat.color})]`} />
               <h3 className="text-lg font-semibold">{cat.label}</h3>
-              <Badge color={cat.color as any} size="sm">{cat.lessons.length}</Badge>
+              <Badge variant={cat.color as any}>{cat.lessons.length}</Badge>
             </div>
             <div className="space-y-3">
               {cat.lessons.map((lesson) => (
@@ -119,7 +119,7 @@ export default function LessonsLearnedPage() {
                       <p className="text-[var(--color-text)]">{lesson.description}</p>
                       {lesson.applicableTo.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {lesson.applicableTo.map((app, i) => (<Badge key={i} variant="default" size="sm">{app}</Badge>))}
+                          {lesson.applicableTo.map((app, i) => (<Badge key={i} variant="default">{app}</Badge>))}
                         </div>
                       )}
                     </div>

@@ -24,10 +24,10 @@ import {
 } from "@/store/workshop";
 
 const phases = [
-  { value: "build", label: "Build", color: "purple", weeks: "1-2" },
+  { value: "build", label: "Build", color: "yellow", weeks: "1-2" },
   { value: "pilot", label: "Pilot", color: "teal", weeks: "3-6" },
-  { value: "refine", label: "Refine", color: "yellow", weeks: "7-8" },
-  { value: "scale", label: "Scale", color: "coral", weeks: "9-12" },
+  { value: "refine", label: "Refine", color: "coral", weeks: "7-8" },
+  { value: "scale", label: "Scale", color: "teal", weeks: "9-12" },
 ] as const;
 
 export default function RoadmapBuilderPage() {
@@ -340,7 +340,7 @@ export default function RoadmapBuilderPage() {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-sm">Week {week}</CardTitle>
-                      <Badge color={phaseColor as any} size="sm">
+                      <Badge variant={phaseColor as any}>
                         {phases.find((p) => p.value === phaseForWeek)?.label}
                       </Badge>
                     </div>
@@ -396,7 +396,7 @@ export default function RoadmapBuilderPage() {
                     <CardContent className="flex items-start justify-between gap-4 py-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <Badge color={getPhaseColor(milestone.phase) as any} size="sm">
+                          <Badge variant={getPhaseColor(milestone.phase) as any}>
                             {phases.find((p) => p.value === milestone.phase)?.label}
                           </Badge>
                           <span className="text-sm text-[var(--color-text-muted)]">

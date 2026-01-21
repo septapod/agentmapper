@@ -202,7 +202,7 @@ export default function FrictionMapPage() {
                 <div className="flex items-center gap-2 mb-2">
                   <Badge variant="default">{example.processArea}</Badge>
                   {example.priority && (
-                    <Badge color={getPriorityColor(example.priority) as any} size="sm">
+                    <Badge variant={getPriorityColor(example.priority) as any}>
                       {example.priority}
                     </Badge>
                   )}
@@ -351,7 +351,7 @@ export default function FrictionMapPage() {
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
                               {fp.priority && (
-                                <Badge color={getPriorityColor(fp.priority) as any} size="sm" className="mb-2">
+                                <Badge variant={getPriorityColor(fp.priority) as any} className="mb-2">
                                   {fp.priority} priority
                                 </Badge>
                               )}

@@ -312,7 +312,7 @@ export default function TrainingPlanPage() {
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {plan.resources.map((resource, i) => (
-                        <Badge key={i} color="teal" size="sm">
+                        <Badge key={i} variant="teal">
                           {resource}
                         </Badge>
                       ))}

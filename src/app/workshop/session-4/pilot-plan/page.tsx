@@ -371,7 +371,7 @@ export default function PilotPlanPage() {
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {plan.testUsers.map((user, i) => (
-                          <Badge key={i} color="teal" size="sm">
+                          <Badge key={i} variant="teal">
                             {user}
                           </Badge>
                         ))}

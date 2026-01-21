@@ -256,8 +256,7 @@ export default function MVPSpecPage() {
                   <Button
                     onClick={handleAddCustomTool}
                     variant="default"
-                    size="sm"
-                    disabled={!customTool.trim()}
+                                       disabled={!customTool.trim()}
                   >
                     Add
                   </Button>
@@ -269,7 +268,7 @@ export default function MVPSpecPage() {
                       Selected Tools:
                     </p>
                     {toolsToUse.map((tool) => (
-                      <Badge key={tool} color="purple">
+                      <Badge key={tool} variant="default">
                         {tool}
                         <button
                           onClick={() => handleRemoveTool(tool)}
@@ -305,8 +304,7 @@ export default function MVPSpecPage() {
                       <Button
                         onClick={() => handleRemoveCheckpoint(index)}
                         variant="ghost"
-                        size="sm"
-                      >
+                                             >
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     )}
@@ -315,8 +313,7 @@ export default function MVPSpecPage() {
                 <Button
                   onClick={handleAddCheckpoint}
                   variant="ghost"
-                  size="sm"
-                  leftIcon={<Plus className="w-4 h-4" />}
+                                   leftIcon={<Plus className="w-4 h-4" />}
                 >
                   Add Checkpoint
                 </Button>
@@ -373,7 +370,7 @@ export default function MVPSpecPage() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <Badge color="purple" size="sm">
+                          <Badge variant="default">
                             {friction?.processArea || "Unknown Area"}
                           </Badge>
                         </div>
@@ -384,8 +381,7 @@ export default function MVPSpecPage() {
                       <Button
                         onClick={() => deleteMVPSpec(spec.id)}
                         variant="ghost"
-                        size="sm"
-                      >
+                                             >
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
@@ -404,7 +400,7 @@ export default function MVPSpecPage() {
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {spec.toolsToUse.map((tool) => (
-                          <Badge key={tool} color="purple" size="sm">
+                          <Badge key={tool} variant="default">
                             {tool}
                           </Badge>
                         ))}

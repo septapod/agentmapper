@@ -136,9 +136,9 @@ export default function NextOpportunitiesPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{opp.title}</h3>
-                    <Badge variant="default" size="sm">{opp.domain}</Badge>
-                    <Badge color={getValueColor(opp.estimatedValue) as any} size="sm" className="flex items-center gap-1">{getValueIcon(opp.estimatedValue)}{opp.estimatedValue}</Badge>
-                    {opp.priority > 0 && (<Badge color="coral" size="sm">P{opp.priority}</Badge>)}
+                    <Badge variant="default">{opp.domain}</Badge>
+                    <Badge variant={getValueColor(opp.estimatedValue) as any} className="flex items-center gap-1">{getValueIcon(opp.estimatedValue)}{opp.estimatedValue}</Badge>
+                    {opp.priority > 0 && (<Badge variant="coral">P{opp.priority}</Badge>)}
                   </div>
                   {opp.patternToReuse && (<p className="text-sm text-[var(--color-text-muted)] mb-2">Pattern: {opp.patternToReuse}</p>)}
                 </div>

@@ -87,7 +87,7 @@ export default function Session3Page() {
               transition={{ delay: 0.1 + index * 0.1 }}
             >
               <Card
-                accent={status === "completed" ? "teal" : status === "in-progress" ? "purple" : "none"}
+                accent={status === "completed" ? "teal" : status === "in-progress" ? "yellow" : "none"}
                 hoverable
               >
                 <CardHeader>
