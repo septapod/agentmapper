@@ -571,9 +571,6 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
 
           set({
             organization: data.organization,
-            futureHeadlines: data.futureHeadlines,
-            opportunities: data.opportunities,
-            designPrinciples: data.designPrinciples,
             frictionPoints: data.frictionPoints,
             scoredOpportunities: data.scoredOpportunities,
             mvpSpecs: [],
