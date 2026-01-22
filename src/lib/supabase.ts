@@ -36,32 +36,6 @@ interface OrganizationRow {
   completion_percent: number;
 }
 
-interface FutureHeadlineRow {
-  id: string;
-  org_id: string;
-  headline: string;
-  timeframe: string;
-  category: string;
-  created_at: string;
-}
-
-interface OpportunityRow {
-  id: string;
-  org_id: string;
-  title: string;
-  description: string;
-  area: string;
-  created_at: string;
-}
-
-interface DesignPrincipleRow {
-  id: string;
-  org_id: string;
-  principle: string;
-  is_guardrail: boolean;
-  created_at: string;
-}
-
 interface FrictionPointRow {
   id: string;
   org_id: string;
@@ -156,110 +130,6 @@ export const db = {
 
       if (error) throw error;
       return data as OrganizationRow;
-    },
-  },
-
-  // Future Headlines
-  futureHeadlines: {
-    async create(orgId: string, data: { headline: string; timeframe: string; category: string }): Promise<FutureHeadlineRow> {
-      const { data: headline, error } = await supabase
-        .from("future_headlines")
-        .insert({
-          org_id: orgId,
-          headline: data.headline,
-          timeframe: data.timeframe,
-          category: data.category,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return headline as FutureHeadlineRow;
-    },
-
-    async list(orgId: string): Promise<FutureHeadlineRow[]> {
-      const { data, error } = await supabase
-        .from("future_headlines")
-        .select("*")
-        .eq("org_id", orgId)
-        .order("created_at", { ascending: true });
-
-      if (error) throw error;
-      return (data || []) as FutureHeadlineRow[];
-    },
-
-    async delete(id: string): Promise<void> {
-      const { error } = await supabase.from("future_headlines").delete().eq("id", id);
-      if (error) throw error;
-    },
-  },
-
-  // Opportunities
-  opportunities: {
-    async create(orgId: string, data: { title: string; description: string; area: string }): Promise<OpportunityRow> {
-      const { data: opportunity, error } = await supabase
-        .from("opportunities")
-        .insert({
-          org_id: orgId,
-          title: data.title,
-          description: data.description,
-          area: data.area,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return opportunity as OpportunityRow;
-    },
-
-    async list(orgId: string): Promise<OpportunityRow[]> {
-      const { data, error } = await supabase
-        .from("opportunities")
-        .select("*")
-        .eq("org_id", orgId)
-        .order("created_at", { ascending: true });
-
-      if (error) throw error;
-      return (data || []) as OpportunityRow[];
-    },
-
-    async delete(id: string): Promise<void> {
-      const { error } = await supabase.from("opportunities").delete().eq("id", id);
-      if (error) throw error;
-    },
-  },
-
-  // Design Principles
-  designPrinciples: {
-    async create(orgId: string, data: { principle: string; is_guardrail: boolean }): Promise<DesignPrincipleRow> {
-      const { data: principle, error } = await supabase
-        .from("design_principles")
-        .insert({
-          org_id: orgId,
-          principle: data.principle,
-          is_guardrail: data.is_guardrail,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return principle as DesignPrincipleRow;
-    },
-
-    async list(orgId: string): Promise<DesignPrincipleRow[]> {
-      const { data, error } = await supabase
-        .from("design_principles")
-        .select("*")
-        .eq("org_id", orgId)
-        .order("created_at", { ascending: true });
-
-      if (error) throw error;
-      return (data || []) as DesignPrincipleRow[];
-    },
-
-    async delete(id: string): Promise<void> {
-      const { error } = await supabase.from("design_principles").delete().eq("id", id);
-      if (error) throw error;
     },
   },
 
@@ -555,9 +425,6 @@ export const db = {
 
   // Batch sync: Push all local data to Supabase
   async syncWorkshopData(orgId: string, workshopData: {
-    futureHeadlines: Array<{ id: string; headline: string; timeframe: string; category: string; createdAt: string }>;
-    opportunities: Array<{ id: string; title: string; description: string; area: string; createdAt: string }>;
-    designPrinciples: Array<{ id: string; principle: string; isGuardrail: boolean; createdAt: string }>;
     frictionPoints: Array<{ id: string; processArea: string; description: string; impactLevel: number; frequency: string; affectedRoles: string[]; createdAt: string }>;
     scoredOpportunities: Array<{ id: string; frictionId?: string; title: string; description: string; valueScore: number; complexityScore: number; quadrant: string; voteCount: number; selectedForPilot: boolean }>;
     pilots: Array<{ id: string; opportunityId: string; aiPattern: string; workflowCurrent: unknown; workflowFuture: unknown; riskScores: unknown; charterData: unknown }>;
@@ -567,9 +434,6 @@ export const db = {
     // Delete existing data for this org and replace with new data
     // This is a simple "last write wins" strategy
     const deletePromises = [
-      supabase.from("future_headlines").delete().eq("org_id", orgId),
-      supabase.from("opportunities").delete().eq("org_id", orgId),
-      supabase.from("design_principles").delete().eq("org_id", orgId),
       supabase.from("friction_points").delete().eq("org_id", orgId),
       supabase.from("scored_opportunities").delete().eq("org_id", orgId),
       supabase.from("pilots").delete().eq("org_id", orgId),
@@ -582,50 +446,6 @@ export const db = {
     // Insert new data
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const insertPromises: PromiseLike<any>[] = [];
-
-    if (workshopData.futureHeadlines.length > 0) {
-      insertPromises.push(
-        supabase.from("future_headlines").insert(
-          workshopData.futureHeadlines.map((h) => ({
-            id: h.id,
-            org_id: orgId,
-            headline: h.headline,
-            timeframe: h.timeframe,
-            category: h.category,
-            created_at: h.createdAt,
-          }))
-        )
-      );
-    }
-
-    if (workshopData.opportunities.length > 0) {
-      insertPromises.push(
-        supabase.from("opportunities").insert(
-          workshopData.opportunities.map((o) => ({
-            id: o.id,
-            org_id: orgId,
-            title: o.title,
-            description: o.description,
-            area: o.area,
-            created_at: o.createdAt,
-          }))
-        )
-      );
-    }
-
-    if (workshopData.designPrinciples.length > 0) {
-      insertPromises.push(
-        supabase.from("design_principles").insert(
-          workshopData.designPrinciples.map((p) => ({
-            id: p.id,
-            org_id: orgId,
-            principle: p.principle,
-            is_guardrail: p.isGuardrail,
-            created_at: p.createdAt,
-          }))
-        )
-      );
-    }
 
     if (workshopData.frictionPoints.length > 0) {
       insertPromises.push(
@@ -726,9 +546,6 @@ export const db = {
   async loadWorkshopData(orgId: string) {
     const [
       org,
-      headlines,
-      opportunities,
-      principles,
       frictionPoints,
       scoredOpportunities,
       pilots,
@@ -736,9 +553,6 @@ export const db = {
       raciEntries,
     ] = await Promise.all([
       this.organizations.get(orgId),
-      this.futureHeadlines.list(orgId),
-      this.opportunities.list(orgId),
-      this.designPrinciples.list(orgId),
       this.frictionPoints.list(orgId),
       this.scoredOpportunities.list(orgId),
       this.pilots.list(orgId),
@@ -756,26 +570,6 @@ export const db = {
         currentSession: org.current_session,
         completionPercent: org.completion_percent,
       } : null,
-      futureHeadlines: headlines.map((h) => ({
-        id: h.id,
-        headline: h.headline,
-        timeframe: h.timeframe as "1-year" | "2-year" | "3-year",
-        category: h.category as "member" | "employee" | "business" | "risk",
-        createdAt: h.created_at,
-      })),
-      opportunities: opportunities.map((o) => ({
-        id: o.id,
-        title: o.title,
-        description: o.description,
-        area: o.area,
-        createdAt: o.created_at,
-      })),
-      designPrinciples: principles.map((p) => ({
-        id: p.id,
-        principle: p.principle,
-        isGuardrail: p.is_guardrail,
-        createdAt: p.created_at,
-      })),
       frictionPoints: frictionPoints.map((f) => ({
         id: f.id,
         processArea: f.process_area,
