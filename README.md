@@ -25,16 +25,19 @@ The current version suffers from critical usability bugs (blank pages, progress 
 3. **Storage Key Migration** - Renamed from "forge-workshop-storage" to "agentmapper-workshop-storage" with automatic data migration
 4. **Form Validation Pattern** - Implemented validation with error messages in Friction Map (pattern ready for rollout)
 
-### 🚨 Immediate Priority (Week 2 - Session 3 Blocker)
+### 🚨 Week 2 Priority 1 - Production Readiness (In Progress)
 
-**CRITICAL BLOCKER:** 4 of 5 Session 3 exercises don't exist - users see blank pages.
+**Week 2 Progress (Jan 22, 2026):**
 
-**Must Fix Immediately:**
+**Completed ✅:**
 1. ✅ Create stub pages for missing Session 3 exercises (pattern-matching, future-state-workflow, risk-governance, mvp-charter)
-2. Fix Friction Map navigation bypass (links to Session 3 instead of Opportunity Scoring)
-3. Fix progress bar stuck at 0% (breaks user trust)
-4. Add "Last Saved" timestamp (restore confidence in data persistence)
-5. Fix Working Principles Enter key support (basic usability)
+2. ✅ Fix Friction Map navigation bypass (now links to Opportunity Scoring)
+3. ✅ Fix Working Principles Enter key support (Enter now adds new items)
+
+**In Progress 🔄:**
+4. 🔄 Fix progress bar stuck at 0% (needs exercise completion tracking)
+5. 🔄 Add "Last Saved" timestamp (restore confidence in data persistence)
+6. 🔄 Test and fix print report feature (investigation complete)
 
 **QA-Validated Issues:** 53 total issues (39 original + 14 from real user testing)
 
