@@ -126,14 +126,14 @@ const initialState: WorkshopState & CloudState = {
   // Session 1
   aiIcebreakerResponses: [],
   cognitiveBiases: [
-    { id: "confirmation", name: "Confirmation Bias", description: "Seeking info that confirms existing beliefs", checked: false },
-    { id: "status-quo", name: "Status Quo Bias", description: "Preferring current state over change", checked: false },
-    { id: "availability", name: "Availability Bias", description: "Overvaluing recent/memorable information", checked: false },
-    { id: "overconfidence", name: "Overconfidence Bias", description: "Overestimating abilities and predictions", checked: false },
-    { id: "sunk-cost", name: "Sunk Cost Fallacy", description: "Continuing due to past investment", checked: false },
-    { id: "groupthink", name: "Groupthink", description: "Conforming to group consensus", checked: false },
-    { id: "negativity", name: "Negativity Bias", description: "Focusing on negative over positive", checked: false },
-    { id: "bandwagon", name: "Bandwagon Effect", description: "Adopting beliefs because others do", checked: false },
+    { id: "confirmation", name: "Confirmation Bias", description: "Favoring information that confirms pre-existing beliefs or opinions, while disregarding contradictory information.", checked: false },
+    { id: "status-quo", name: "Status Quo Bias", description: "Preferring things to stay the same by resisting change and innovation.", checked: false },
+    { id: "availability", name: "Availability Bias", description: "Overestimating the importance of information that is readily available or recent, while ignoring less visible data.", checked: false },
+    { id: "overconfidence", name: "Overconfidence", description: "Having an inflated belief in one's own knowledge and abilities, leading to underestimating the complexity or potential of new technologies.", checked: false },
+    { id: "sunk-cost", name: "Sunk Cost Fallacy", description: "Continuing to invest in a technology or process because of the resources already committed, rather than evaluating its current and future value objectively.", checked: false },
+    { id: "groupthink", name: "Groupthink", description: "Prioritizing consensus within a group over critical evaluation, leading to poor decision-making regarding new technologies.", checked: false },
+    { id: "negativity", name: "Negativity Bias", description: "Giving more weight to negative experiences or information, which can overshadow the potential benefits of new technologies.", checked: false },
+    { id: "bandwagon", name: "Bandwagon Effect", description: "Adopting a technology or opinion because others are doing so, without conducting a thorough and objective evaluation.", checked: false },
   ],
   aiWorkingPrinciples: [],
   aiTradeoffs: [

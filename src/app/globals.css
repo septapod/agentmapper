@@ -283,3 +283,120 @@ a:hover {
   border-left-color: var(--color-accent-coral);
   background: rgba(207, 90, 90, 0.1);
 }
+
+/* ============================
+   PRINT STYLES
+   ============================ */
+
+@media print {
+  /* Reset for clean printing */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  /* Hide non-print elements */
+  .print\:hidden,
+  nav,
+  aside,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Page setup */
+  @page {
+    size: letter;
+    margin: 0.75in;
+  }
+
+  /* Force page breaks */
+  .print-page-break {
+    page-break-before: always;
+  }
+
+  /* Prevent breaking inside elements */
+  .print-no-break {
+    page-break-inside: avoid;
+  }
+
+  /* Section headers */
+  .print-section-title {
+    font-size: 16pt;
+    border-bottom: 2pt solid #437481;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    color: black;
+  }
+
+  .print-subsection-title {
+    font-size: 13pt;
+    color: #333;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Tables */
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+  }
+
+  .print-table th,
+  .print-table td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    text-align: left;
+    font-size: 10pt;
+  }
+
+  .print-table th {
+    background: #f5f5f5 !important;
+    font-weight: 600;
+  }
+
+  /* Cards print as bordered boxes */
+  .print-card {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    page-break-inside: avoid;
+  }
+
+  /* Badges in print */
+  .print-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px solid #333;
+    font-size: 9pt;
+    margin-right: 4px;
+  }
+
+  /* Empty state */
+  .print-empty {
+    color: #888;
+    font-style: italic;
+    padding: 1rem;
+    border: 1px dashed #ccc;
+    text-align: center;
+  }
+
+  /* Links don't need special styling in print */
+  a {
+    color: black !important;
+    text-decoration: none !important;
+  }
+}
+
+/* Report page styles (visible on screen too) */
+.print-report {
+  background: white;
+  color: #1a1a1a;
+  min-height: 100vh;
+}
+
+.print-content {
+  font-family: var(--font-body);
+}

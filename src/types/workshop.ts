@@ -12,8 +12,8 @@ export interface Organization {
 export interface AIIcebreakerResponse {
   id: string;
   participantName: string;
-  timelineMonths: number; // 6, 12, 18, 24, 36
-  optimismScore: number; // 1-5 scale
+  impactScore: number; // 0-4: Prompt A - "AI will have a dramatic impact on society within the next three years"
+  optimismScore: number; // 0-4: Prompt B - "AI will have net positive outcomes for individuals and society"
   createdAt: string;
 }
 

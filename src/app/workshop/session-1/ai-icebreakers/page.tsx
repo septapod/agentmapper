@@ -3,28 +3,34 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Plus, Trash2, Users, Smile, Frown, Meh } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { ArrowLeft, ArrowRight, Plus, Trash2, Users } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Badge } from "@/components/ui/Badge";
 import { useWorkshopStore, useIcebreakerResponses, useCognitiveBiases } from "@/store/workshop";
 
-const timelineOptions = [
-  { value: 6, label: "6 months" },
-  { value: 12, label: "1 year" },
-  { value: 18, label: "18 months" },
-  { value: 24, label: "2 years" },
-  { value: 36, label: "3+ years" },
-];
+// NOBL's exact prompts
+const promptA = {
+  text: "AI will have a dramatic impact on society within the next three years.",
+  options: [
+    { value: 0, label: "0", description: "Completely disagree. AI is overhyped." },
+    { value: 1, label: "1", description: "Somewhat disagree" },
+    { value: 2, label: "2", description: "Unsure" },
+    { value: 3, label: "3", description: "Somewhat agree" },
+    { value: 4, label: "4", description: "Completely agree. The AI revolution is imminent." },
+  ],
+};
 
-const optimismEmojis = [
-  { value: 1, emoji: "😟", label: "Very concerned" },
-  { value: 2, emoji: "😕", label: "Concerned" },
-  { value: 3, emoji: "😐", label: "Neutral" },
-  { value: 4, emoji: "🙂", label: "Optimistic" },
-  { value: 5, emoji: "😊", label: "Very optimistic" },
-];
+const promptB = {
+  text: "AI will have net positive outcomes for individuals and society.",
+  options: [
+    { value: 0, label: "0", description: "Completely disagree. AI will lead to far more harm than good." },
+    { value: 1, label: "1", description: "Somewhat disagree" },
+    { value: 2, label: "2", description: "Unsure" },
+    { value: 3, label: "3", description: "Somewhat agree" },
+    { value: 4, label: "4", description: "Completely agree. AI will improve human life as we know it." },
+  ],
+};
 
 export default function AIIcebreakersPage() {
   const responses = useIcebreakerResponses();
@@ -32,29 +38,25 @@ export default function AIIcebreakersPage() {
   const { addIcebreakerResponse, deleteIcebreakerResponse, toggleCognitiveBias } = useWorkshopStore();
 
   const [name, setName] = useState("");
-  const [timeline, setTimeline] = useState<number>(12);
-  const [optimism, setOptimism] = useState<number>(3);
+  const [impactScore, setImpactScore] = useState<number | null>(null);
+  const [optimismScore, setOptimismScore] = useState<number | null>(null);
 
   const handleAdd = () => {
-    if (!name.trim()) return;
+    if (!name.trim() || impactScore === null || optimismScore === null) return;
 
     addIcebreakerResponse({
       participantName: name.trim(),
-      timelineMonths: timeline,
-      optimismScore: optimism,
+      impactScore,
+      optimismScore,
     });
 
     // Reset form
     setName("");
-    setTimeline(12);
-    setOptimism(3);
+    setImpactScore(null);
+    setOptimismScore(null);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && name.trim()) {
-      handleAdd();
-    }
-  };
+  const canAdd = name.trim() && impactScore !== null && optimismScore !== null;
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
@@ -82,12 +84,14 @@ export default function AIIcebreakersPage() {
           </div>
         </div>
 
-        <p className="text-[var(--color-text-body)]">
-          Collect team perspectives on AI's timeline and impact. Quickly add each participant's response below.
-        </p>
+        <div className="bg-[var(--color-accent)]/10 border-l-4 border-[var(--color-accent)] p-4 rounded-r-lg">
+          <p className="text-[var(--color-text-body)] font-medium">
+            Individually, rate your level of agreement with the following prompts. Do not share your answers.
+          </p>
+        </div>
       </motion.div>
 
-      {/* Quick Add Form */}
+      {/* Add Participant Form */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -96,8 +100,6 @@ export default function AIIcebreakersPage() {
       >
         <Card accent="yellow" hoverable={false}>
           <CardContent>
-            <h3 className="font-semibold mb-4">Add Participant Response</h3>
-
             <div className="space-y-6">
               {/* Name Input */}
               <Input
@@ -105,55 +107,62 @@ export default function AIIcebreakersPage() {
                 placeholder="e.g., Sarah Mitchell"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                onKeyPress={handleKeyPress}
                 autoFocus
               />
 
-              {/* Timeline Selection */}
+              {/* Prompt A */}
               <div>
-                <label className="block mb-2 text-sm font-medium text-[var(--color-text)]">
-                  When will AI significantly impact your role?
+                <label className="block mb-3 text-sm font-semibold text-[var(--color-text)]">
+                  Prompt A: <span className="font-normal text-[var(--color-text-body)]">{promptA.text}</span>
                 </label>
-                <div className="flex gap-2 flex-wrap">
-                  {timelineOptions.map((option) => (
+                <div className="grid grid-cols-5 gap-2">
+                  {promptA.options.map((option) => (
                     <button
                       key={option.value}
-                      onClick={() => setTimeline(option.value)}
+                      onClick={() => setImpactScore(option.value)}
                       className={`
-                        px-4 py-2 rounded-lg border transition-colors text-sm font-medium
-                        ${timeline === option.value
-                          ? "bg-[var(--color-accent)]/20 border-[var(--color-accent)] text-[var(--color-accent)]"
-                          : "border-white/[0.1] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border-hover)]"
+                        p-3 rounded-lg border transition-all text-center
+                        ${impactScore === option.value
+                          ? "bg-[var(--color-accent-coral)]/20 border-[var(--color-accent-coral)]"
+                          : "border-white/[0.1] hover:border-[var(--color-border-hover)]"
                         }
                       `}
                     >
-                      {option.label}
+                      <div className={`text-xl font-bold mb-1 ${impactScore === option.value ? "text-[var(--color-accent-coral)]" : "text-[var(--color-text)]"}`}>
+                        {option.label}
+                      </div>
+                      <div className="text-xs text-[var(--color-text-muted)] leading-tight">
+                        {option.description}
+                      </div>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Optimism Scale */}
+              {/* Prompt B */}
               <div>
-                <label className="block mb-2 text-sm font-medium text-[var(--color-text)]">
-                  How do you feel about AI's impact?
+                <label className="block mb-3 text-sm font-semibold text-[var(--color-text)]">
+                  Prompt B: <span className="font-normal text-[var(--color-text-body)]">{promptB.text}</span>
                 </label>
-                <div className="flex gap-3 justify-between">
-                  {optimismEmojis.map((option) => (
+                <div className="grid grid-cols-5 gap-2">
+                  {promptB.options.map((option) => (
                     <button
                       key={option.value}
-                      onClick={() => setOptimism(option.value)}
+                      onClick={() => setOptimismScore(option.value)}
                       className={`
-                        flex-1 p-4 rounded-lg border transition-all
-                        ${optimism === option.value
-                          ? "bg-[var(--color-accent)]/20 border-[var(--color-accent)] scale-110"
-                          : "border-white/[0.1] hover:border-[var(--color-border-hover)] hover:scale-105"
+                        p-3 rounded-lg border transition-all text-center
+                        ${optimismScore === option.value
+                          ? "bg-[var(--color-accent-coral)]/20 border-[var(--color-accent-coral)]"
+                          : "border-white/[0.1] hover:border-[var(--color-border-hover)]"
                         }
                       `}
-                      title={option.label}
                     >
-                      <div className="text-3xl mb-1">{option.emoji}</div>
-                      <div className="text-xs text-[var(--color-text-muted)]">{option.label}</div>
+                      <div className={`text-xl font-bold mb-1 ${optimismScore === option.value ? "text-[var(--color-accent-coral)]" : "text-[var(--color-text)]"}`}>
+                        {option.label}
+                      </div>
+                      <div className="text-xs text-[var(--color-text-muted)] leading-tight">
+                        {option.description}
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -163,7 +172,7 @@ export default function AIIcebreakersPage() {
               <Button
                 variant="primary"
                 onClick={handleAdd}
-                disabled={!name.trim()}
+                disabled={!canAdd}
                 leftIcon={<Plus className="w-4 h-4" />}
                 className="w-full"
               >
@@ -186,32 +195,34 @@ export default function AIIcebreakersPage() {
             Team Responses <span className="text-[var(--color-text-muted)]">({responses.length})</span>
           </h3>
           <div className="space-y-3">
-            {responses.map((response) => {
-              const emoji = optimismEmojis.find(e => e.value === response.optimismScore)?.emoji || "😐";
-              const timelineLabel = timelineOptions.find(t => t.value === response.timelineMonths)?.label || `${response.timelineMonths} months`;
-
-              return (
-                <Card key={response.id} className="group">
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className="text-3xl">{emoji}</div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-[var(--color-text)]">{response.participantName}</p>
-                        <p className="text-sm text-[var(--color-text-muted)]">
-                          Timeline: {timelineLabel}
-                        </p>
+            {responses.map((response) => (
+              <Card key={response.id} className="group">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="flex gap-2">
+                      <div className="w-10 h-10 rounded-lg bg-[var(--color-accent-coral)]/20 flex items-center justify-center text-[var(--color-accent-coral)] font-bold">
+                        {response.impactScore}
+                      </div>
+                      <div className="w-10 h-10 rounded-lg bg-[var(--color-accent-teal)]/20 flex items-center justify-center text-[var(--color-accent-teal)] font-bold">
+                        {response.optimismScore}
                       </div>
                     </div>
-                    <button
-                      onClick={() => deleteIcebreakerResponse(response.id)}
-                      className="p-2 text-[var(--color-text-muted)] hover:text-[var(--color-accent-coral)] opacity-0 group-hover:opacity-100 transition-all"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex-1">
+                      <p className="font-semibold text-[var(--color-text)]">{response.participantName}</p>
+                      <p className="text-xs text-[var(--color-text-muted)]">
+                        Impact: {response.impactScore} · Optimism: {response.optimismScore}
+                      </p>
+                    </div>
                   </div>
-                </Card>
-              );
-            })}
+                  <button
+                    onClick={() => deleteIcebreakerResponse(response.id)}
+                    className="p-2 text-[var(--color-text-muted)] hover:text-[var(--color-accent-coral)] opacity-0 group-hover:opacity-100 transition-all"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </Card>
+            ))}
           </div>
         </motion.div>
       )}

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Home, ChevronRight } from "lucide-react";
+import { Home, ChevronRight, Printer } from "lucide-react";
 import { useOrganization } from "@/store/workshop";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { CloudSyncPanel } from "@/components/workshop/CloudSyncPanel";
@@ -155,6 +155,17 @@ export default function WorkshopLayout({
             </div>
           ))}
         </nav>
+
+        {/* Print Report */}
+        <div className="p-4 border-t border-white/[0.08]">
+          <button
+            onClick={() => window.open('/workshop/report', '_blank')}
+            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-white/[0.02] rounded-lg transition-colors"
+          >
+            <Printer className="w-4 h-4" />
+            Print Report
+          </button>
+        </div>
 
         {/* Cloud Sync Status */}
         <div className="p-4 border-t border-white/[0.08]">
