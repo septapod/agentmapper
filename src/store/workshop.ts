@@ -669,16 +669,12 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
       partialize: (state) => ({
         organization: state.organization,
         currentSession: state.currentSession,
-        // Onboarding
+        // Session 1 - AI Strategy Foundation
         aiIcebreakerResponses: state.aiIcebreakerResponses,
         cognitiveBiases: state.cognitiveBiases,
         aiWorkingPrinciples: state.aiWorkingPrinciples,
         aiTradeoffs: state.aiTradeoffs,
-        onboardingComplete: state.onboardingComplete,
-        // Session 1
-        futureHeadlines: state.futureHeadlines,
-        opportunities: state.opportunities,
-        designPrinciples: state.designPrinciples,
+        // Session 2 - Find the Friction
         frictionPoints: state.frictionPoints,
         scoredOpportunities: state.scoredOpportunities,
         mvpSpecs: state.mvpSpecs,
