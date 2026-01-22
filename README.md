@@ -33,11 +33,15 @@ The current version suffers from critical usability bugs (blank pages, progress 
 1. ✅ Create stub pages for missing Session 3 exercises (pattern-matching, future-state-workflow, risk-governance, mvp-charter)
 2. ✅ Fix Friction Map navigation bypass (now links to Opportunity Scoring)
 3. ✅ Fix Working Principles Enter key support (Enter now adds new items)
+4. ✅ Fix cloud sync database constraint violation (impactLevel/frequency defaults)
+5. ✅ Activity Dashboards - Exercise cards now show user decisions instead of static descriptions
+6. ✅ Session Summaries - Roll-up summaries at top of each session page
+7. ✅ Workshop Progress Summary - Key milestones on main workshop page
 
 **In Progress 🔄:**
-4. 🔄 Fix progress bar stuck at 0% (needs exercise completion tracking)
-5. 🔄 Add "Last Saved" timestamp (restore confidence in data persistence)
-6. 🔄 Test and fix print report feature (investigation complete)
+8. 🔄 Fix progress bar stuck at 0% (needs exercise completion tracking)
+9. 🔄 Add "Last Saved" timestamp (restore confidence in data persistence)
+10. 🔄 Test and fix print report feature (investigation complete)
 
 **QA-Validated Issues:** 53 total issues (39 original + 14 from real user testing)
 
