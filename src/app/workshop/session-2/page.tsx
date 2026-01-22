@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/Button";
 import { StepProgress } from "@/components/ui/ProgressBar";
 import { useFrictionPoints, useScoredOpportunities } from "@/store/workshop";
+import { ExerciseDataSummary } from "@/components/workshop/ExerciseDataSummary";
 
 const exercises = [
   {
@@ -87,6 +88,20 @@ export default function Session2Page() {
         return scoredOpportunities.filter(o => o.selectedForPilot).length > 0 ? "completed" : "pending";
       default:
         return "pending";
+    }
+  };
+
+  // Check if exercise has any data (for showing dashboard vs description)
+  const exerciseHasData = (id: string): boolean => {
+    switch (id) {
+      case "friction-map":
+        return frictionPoints.length > 0;
+      case "opportunity-scoring":
+      case "priority-matrix":
+      case "dot-voting":
+        return scoredOpportunities.length > 0;
+      default:
+        return false;
     }
   };
 
@@ -182,21 +197,29 @@ export default function Session2Page() {
                 </CardHeader>
 
                 <CardContent>
-                  <p className="text-[var(--color-text-body)] mb-4">{exercise.description}</p>
+                  {exerciseHasData(exercise.id) ? (
+                    // Show data summary dashboard when exercise has data
+                    <ExerciseDataSummary exerciseId={exercise.id} variant="compact" />
+                  ) : (
+                    // Show description and tips when no data yet
+                    <>
+                      <p className="text-[var(--color-text-body)] mb-4">{exercise.description}</p>
 
-                  <div className="bg-[var(--color-bg)] rounded-lg p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
-                      Tips for Success
-                    </p>
-                    <ul className="space-y-2">
-                      {exercise.tips.map((tip, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-[var(--color-text-body)]">
-                          <span className="w-1.5 h-1.5 mt-2 flex-shrink-0 rounded-full bg-[var(--color-accent-coral)]" />
-                          {tip}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                      <div className="bg-[var(--color-bg)] rounded-lg p-4">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
+                          Tips for Success
+                        </p>
+                        <ul className="space-y-2">
+                          {exercise.tips.map((tip, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm text-[var(--color-text-body)]">
+                              <span className="w-1.5 h-1.5 mt-2 flex-shrink-0 rounded-full bg-[var(--color-accent-coral)]" />
+                              {tip}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
