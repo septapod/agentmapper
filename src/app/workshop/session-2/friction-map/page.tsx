@@ -19,7 +19,6 @@ import { Badge } from "@/components/ui/Badge";
 import {
   useWorkshopStore,
   useFrictionPoints,
-  useOpportunities,
 } from "@/store/workshop";
 import type { FrictionPoint } from "@/types/workshop";
 
@@ -48,7 +47,6 @@ const exampleFrictions = [
 
 export default function FrictionMapPage() {
   const frictionPoints = useFrictionPoints();
-  const opportunities = useOpportunities();
   const { addFrictionPoint, deleteFrictionPoint } = useWorkshopStore();
 
   const [processArea, setProcessArea] = useState("");
@@ -146,27 +144,6 @@ export default function FrictionMapPage() {
                 </p>
               </div>
             </div>
-
-            {/* Show opportunities from Session 1 */}
-            {opportunities.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-white/[0.08]">
-                <p className="text-sm font-semibold text-[var(--color-text)] mb-2">
-                  <Zap className="w-4 h-4 inline mr-2 text-[var(--color-accent)]" />
-                  Your Session 1 Opportunities ({opportunities.length})
-                </p>
-                <p className="text-xs text-[var(--color-text-muted)] mb-2">
-                  Consider these opportunities as you map friction points:
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {opportunities.slice(0, 6).map(opp => (
-                    <Badge key={opp.id} variant="default">{opp.title}</Badge>
-                  ))}
-                  {opportunities.length > 6 && (
-                    <Badge variant="default">+{opportunities.length - 6} more</Badge>
-                  )}
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
       </motion.div>

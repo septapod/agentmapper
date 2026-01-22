@@ -20,7 +20,6 @@ import {
   useWorkshopStore,
   useFrictionPoints,
   useScoredOpportunities,
-  useOpportunities,
 } from "@/store/workshop";
 
 const valueFactors = [
@@ -69,13 +68,12 @@ const quadrantInfo = {
 
 export default function OpportunityScoringPage() {
   const frictionPoints = useFrictionPoints();
-  const opportunities = useOpportunities();
   const scoredOpportunities = useScoredOpportunities();
   const { addScoredOpportunity, updateScoredOpportunity } = useWorkshopStore();
 
-  // Combine friction points and opportunities as scoring candidates
+  // Convert friction points to scoring candidates
   const candidates = useMemo(() => {
-    const items: Array<{ id: string; title: string; description: string; type: "friction" | "opportunity"; source: string }> = [];
+    const items: Array<{ id: string; title: string; description: string; type: "friction"; source: string }> = [];
 
     frictionPoints.forEach(fp => {
       items.push({
@@ -87,18 +85,8 @@ export default function OpportunityScoringPage() {
       });
     });
 
-    opportunities.forEach(opp => {
-      items.push({
-        id: opp.id,
-        title: opp.title,
-        description: opp.description,
-        type: "opportunity",
-        source: opp.area,
-      });
-    });
-
     return items;
-  }, [frictionPoints, opportunities]);
+  }, [frictionPoints]);
 
   // Find unscored candidates
   const unscoredCandidates = candidates.filter(

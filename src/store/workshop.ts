@@ -6,9 +6,6 @@ import type {
   CognitiveBias,
   AIWorkingPrinciple,
   AITradeoff,
-  FutureHeadline,
-  Opportunity,
-  DesignPrinciple,
   FrictionPoint,
   ScoredOpportunity,
   MVPSpec,
@@ -51,22 +48,6 @@ interface WorkshopActions {
 
   // Session 1 - AI Tradeoff Navigator
   updateTradeoff: (topic: string, value: number, rationale: string) => void;
-
-  // Session 1 - Future Headlines (removed)
-  // Session 2 - Friction Points
-  addFutureHeadline: (headline: Omit<FutureHeadline, "id" | "createdAt">) => void;
-  updateFutureHeadline: (id: string, updates: Partial<FutureHeadline>) => void;
-  deleteFutureHeadline: (id: string) => void;
-
-  // Session 1 - Opportunities
-  addOpportunity: (opportunity: Omit<Opportunity, "id" | "createdAt">) => void;
-  updateOpportunity: (id: string, updates: Partial<Opportunity>) => void;
-  deleteOpportunity: (id: string) => void;
-
-  // Session 1 - Design Principles
-  addDesignPrinciple: (principle: Omit<DesignPrinciple, "id" | "createdAt">) => void;
-  updateDesignPrinciple: (id: string, updates: Partial<DesignPrinciple>) => void;
-  deleteDesignPrinciple: (id: string) => void;
 
   // Session 2 - Friction Points
   addFrictionPoint: (friction: Omit<FrictionPoint, "id" | "createdAt">) => void;
@@ -272,78 +253,6 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
               ? { ...t, sliderValue: value, rationale, createdAt: new Date().toISOString() }
               : t
           ),
-          isDirty: true,
-        })),
-
-      // Session 1 - Future Headlines (removed - no longer in use)
-      addFutureHeadline: (headline) =>
-        set((state) => ({
-          futureHeadlines: [
-            ...state.futureHeadlines,
-            { ...headline, id: generateId(), createdAt: new Date().toISOString() },
-          ],
-          isDirty: true,
-        })),
-
-      updateFutureHeadline: (id, updates) =>
-        set((state) => ({
-          futureHeadlines: state.futureHeadlines.map((h) =>
-            h.id === id ? { ...h, ...updates } : h
-          ),
-          isDirty: true,
-        })),
-
-      deleteFutureHeadline: (id) =>
-        set((state) => ({
-          futureHeadlines: state.futureHeadlines.filter((h) => h.id !== id),
-          isDirty: true,
-        })),
-
-      // Session 1 - Opportunities
-      addOpportunity: (opportunity) =>
-        set((state) => ({
-          opportunities: [
-            ...state.opportunities,
-            { ...opportunity, id: generateId(), createdAt: new Date().toISOString() },
-          ],
-          isDirty: true,
-        })),
-
-      updateOpportunity: (id, updates) =>
-        set((state) => ({
-          opportunities: state.opportunities.map((o) =>
-            o.id === id ? { ...o, ...updates } : o
-          ),
-          isDirty: true,
-        })),
-
-      deleteOpportunity: (id) =>
-        set((state) => ({
-          opportunities: state.opportunities.filter((o) => o.id !== id),
-          isDirty: true,
-        })),
-
-      // Session 1 - Design Principles
-      addDesignPrinciple: (principle) =>
-        set((state) => ({
-          designPrinciples: [
-            ...state.designPrinciples,
-            { ...principle, id: generateId(), createdAt: new Date().toISOString() },
-          ],
-          isDirty: true,
-        })),
-
-      updateDesignPrinciple: (id, updates) =>
-        set((state) => ({
-          designPrinciples: state.designPrinciples.map((p) =>
-            p.id === id ? { ...p, ...updates } : p
-          ),
-          isDirty: true,
-        })),
-
-      deleteDesignPrinciple: (id) =>
-        set((state) => ({
-          designPrinciples: state.designPrinciples.filter((p) => p.id !== id),
           isDirty: true,
         })),
 
@@ -619,9 +528,6 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
 
           // Sync existing local data to cloud
           await db.syncWorkshopData(org.id, {
-            futureHeadlines: state.futureHeadlines,
-            opportunities: state.opportunities,
-            designPrinciples: state.designPrinciples,
             frictionPoints: state.frictionPoints.map(fp => ({
               ...fp,
               impactLevel: fp.impactLevel || 0,
@@ -703,9 +609,6 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
 
         try {
           await db.syncWorkshopData(state.cloudOrgId, {
-            futureHeadlines: state.futureHeadlines,
-            opportunities: state.opportunities,
-            designPrinciples: state.designPrinciples,
             frictionPoints: state.frictionPoints.map(fp => ({
               ...fp,
               impactLevel: fp.impactLevel || 0,
