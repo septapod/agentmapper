@@ -179,21 +179,23 @@ export default function PriorityMatrixPage() {
         transition={{ delay: 0.2 }}
         className="mb-8"
       >
-        <div className="relative">
-          {/* Axis Labels */}
-          <div className="absolute -left-6 top-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap">
-            <span className="text-sm font-medium text-[var(--color-text-muted)]">
+        {/* X-Axis Label (Complexity) */}
+        <div className="text-center mb-4">
+          <span className="text-sm font-medium text-[var(--color-text-muted)]">
+            ← Low Complexity | High Complexity →
+          </span>
+        </div>
+
+        <div className="flex">
+          {/* Y-Axis Label (Value) */}
+          <div className="flex items-center justify-center w-8 mr-4">
+            <span className="text-sm font-medium text-[var(--color-text-muted)] [writing-mode:vertical-lr] rotate-180">
               ← Low Value | High Value →
-            </span>
-          </div>
-          <div className="text-center mb-4">
-            <span className="text-sm font-medium text-[var(--color-text-muted)]">
-              ← Low Complexity | High Complexity →
             </span>
           </div>
 
           {/* Matrix Grid */}
-          <div className="grid grid-cols-2 gap-4 ml-8">
+          <div className="grid grid-cols-2 gap-4 flex-1">
             {/* Top Row: Quick Wins & Strategic */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}

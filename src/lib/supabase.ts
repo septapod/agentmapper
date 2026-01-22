@@ -431,25 +431,14 @@ export const db = {
     roadmapMilestones: Array<{ id: string; pilotId: string; title: string; weekNumber: number; owner: string; deliverable: string; dependencies: string[]; status: string }>;
     raciEntries: Array<{ id: string; activity: string; roleAssignments: unknown }>;
   }): Promise<void> {
-    // Delete existing data for this org and replace with new data
-    // This is a simple "last write wins" strategy
-    const deletePromises = [
-      supabase.from("friction_points").delete().eq("org_id", orgId),
-      supabase.from("scored_opportunities").delete().eq("org_id", orgId),
-      supabase.from("pilots").delete().eq("org_id", orgId),
-      supabase.from("roadmap_milestones").delete().eq("org_id", orgId),
-      supabase.from("raci_entries").delete().eq("org_id", orgId),
-    ];
-
-    await Promise.all(deletePromises);
-
-    // Insert new data
+    // Use upsert instead of delete + insert to prevent data loss
+    // This implements a merge-based sync strategy
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const insertPromises: PromiseLike<any>[] = [];
+    const upsertPromises: PromiseLike<any>[] = [];
 
     if (workshopData.frictionPoints.length > 0) {
-      insertPromises.push(
-        supabase.from("friction_points").insert(
+      upsertPromises.push(
+        supabase.from("friction_points").upsert(
           workshopData.frictionPoints.map((f) => ({
             id: f.id,
             org_id: orgId,
@@ -459,14 +448,15 @@ export const db = {
             frequency: f.frequency,
             affected_roles: f.affectedRoles,
             created_at: f.createdAt,
-          }))
+          })),
+          { onConflict: "id" }
         )
       );
     }
 
     if (workshopData.scoredOpportunities.length > 0) {
-      insertPromises.push(
-        supabase.from("scored_opportunities").insert(
+      upsertPromises.push(
+        supabase.from("scored_opportunities").upsert(
           workshopData.scoredOpportunities.map((o) => ({
             id: o.id,
             org_id: orgId,
@@ -478,14 +468,15 @@ export const db = {
             quadrant: o.quadrant,
             vote_count: o.voteCount,
             selected_for_pilot: o.selectedForPilot,
-          }))
+          })),
+          { onConflict: "id" }
         )
       );
     }
 
     if (workshopData.pilots.length > 0) {
-      insertPromises.push(
-        supabase.from("pilots").insert(
+      upsertPromises.push(
+        supabase.from("pilots").upsert(
           workshopData.pilots.map((p) => ({
             id: p.id,
             org_id: orgId,
@@ -495,14 +486,15 @@ export const db = {
             workflow_future: p.workflowFuture,
             risk_scores: p.riskScores,
             charter_data: p.charterData,
-          }))
+          })),
+          { onConflict: "id" }
         )
       );
     }
 
     if (workshopData.roadmapMilestones.length > 0) {
-      insertPromises.push(
-        supabase.from("roadmap_milestones").insert(
+      upsertPromises.push(
+        supabase.from("roadmap_milestones").upsert(
           workshopData.roadmapMilestones.map((m) => ({
             id: m.id,
             org_id: orgId,
@@ -513,25 +505,27 @@ export const db = {
             deliverable: m.deliverable,
             dependencies: m.dependencies,
             status: m.status,
-          }))
+          })),
+          { onConflict: "id" }
         )
       );
     }
 
     if (workshopData.raciEntries.length > 0) {
-      insertPromises.push(
-        supabase.from("raci_entries").insert(
+      upsertPromises.push(
+        supabase.from("raci_entries").upsert(
           workshopData.raciEntries.map((e) => ({
             id: e.id,
             org_id: orgId,
             activity: e.activity,
             role_assignments: e.roleAssignments,
-          }))
+          })),
+          { onConflict: "id" }
         )
       );
     }
 
-    const results = await Promise.all(insertPromises);
+    const results = await Promise.all(upsertPromises);
 
     // Check for errors
     for (const result of results) {

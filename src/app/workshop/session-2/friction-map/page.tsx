@@ -54,8 +54,35 @@ export default function FrictionMapPage() {
   const [priority, setPriority] = useState<"high" | "medium" | "low" | undefined>(undefined);
   const [showExamples, setShowExamples] = useState(true);
 
+  // Validation state
+  const [errors, setErrors] = useState<{
+    processArea?: string;
+    description?: string;
+  }>({});
+
+  const validateForm = (): boolean => {
+    const newErrors: typeof errors = {};
+
+    if (!processArea.trim()) {
+      newErrors.processArea = "Process area is required";
+    } else if (processArea.trim().length < 2) {
+      newErrors.processArea = "Process area must be at least 2 characters";
+    }
+
+    if (!description.trim()) {
+      newErrors.description = "Description is required";
+    } else if (description.trim().length < 10) {
+      newErrors.description = "Description must be at least 10 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleAdd = () => {
-    if (!processArea.trim() || !description.trim()) return;
+    if (!validateForm()) {
+      return;
+    }
 
     addFrictionPoint({
       processArea: processArea.trim(),
@@ -66,6 +93,22 @@ export default function FrictionMapPage() {
     setProcessArea("");
     setDescription("");
     setPriority(undefined);
+    setErrors({});
+  };
+
+  // Clear errors on input change
+  const handleProcessAreaChange = (value: string) => {
+    setProcessArea(value);
+    if (errors.processArea) {
+      setErrors({ ...errors, processArea: undefined });
+    }
+  };
+
+  const handleDescriptionChange = (value: string) => {
+    setDescription(value);
+    if (errors.description) {
+      setErrors({ ...errors, description: undefined });
+    }
   };
 
   const groupedFrictions = frictionPoints.reduce((acc, fp) => {
@@ -208,7 +251,9 @@ export default function FrictionMapPage() {
                 label="Process Area"
                 placeholder="e.g., Lending, Contact Center, Collections, Back Office..."
                 value={processArea}
-                onChange={(e) => setProcessArea(e.target.value)}
+                onChange={(e) => handleProcessAreaChange(e.target.value)}
+                error={errors.processArea}
+                required
               />
 
               {/* Description */}
@@ -216,8 +261,10 @@ export default function FrictionMapPage() {
                 label="Friction Description"
                 placeholder="Describe the friction point: What takes hours that should take minutes? Where do errors happen? What's repetitive and tedious?"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => handleDescriptionChange(e.target.value)}
+                error={errors.description}
                 className="min-h-[100px]"
+                required
               />
 
               {/* Priority (Optional) */}

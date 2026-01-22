@@ -29,6 +29,10 @@ interface CloudState {
   syncError: string | null;
 }
 
+interface VotingState {
+  isVoting: boolean;
+}
+
 interface WorkshopActions {
   // Organization
   setOrganization: (org: Organization) => void;
@@ -119,7 +123,11 @@ const initialCloudState: CloudState = {
   syncError: null,
 };
 
-const initialState: WorkshopState & CloudState = {
+const initialVotingState: VotingState = {
+  isVoting: false,
+};
+
+const initialState: WorkshopState & CloudState & VotingState = {
   organization: null,
   currentSession: 1, // Start at Session 1
 
@@ -167,9 +175,12 @@ const initialState: WorkshopState & CloudState = {
 
   // Cloud sync
   ...initialCloudState,
+
+  // Voting state
+  ...initialVotingState,
 };
 
-export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActions>()(
+export const useWorkshopStore = create<WorkshopState & CloudState & VotingState & WorkshopActions>()(
   persist(
     (set, get) => ({
       ...initialState,
@@ -304,13 +315,28 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
           isDirty: true,
         })),
 
-      voteForOpportunity: (id) =>
-        set((state) => ({
+      voteForOpportunity: (id) => {
+        const state = get();
+
+        // Prevent concurrent vote updates
+        if (state.isVoting) {
+          return;
+        }
+
+        // Set voting flag and update vote count
+        set({
+          isVoting: true,
           scoredOpportunities: state.scoredOpportunities.map((o) =>
             o.id === id ? { ...o, voteCount: o.voteCount + 1 } : o
           ),
           isDirty: true,
-        })),
+        });
+
+        // Reset voting flag after a short delay to prevent rapid clicking
+        setTimeout(() => {
+          set({ isVoting: false });
+        }, 300);
+      },
 
       togglePilotSelection: (id) =>
         set((state) => ({
@@ -527,6 +553,8 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
           });
 
           // Sync existing local data to cloud
+          // Note: MVP specs and pilot plans are not yet synced to cloud
+          // as the database schema doesn't have tables for them yet
           await db.syncWorkshopData(org.id, {
             frictionPoints: state.frictionPoints.map(fp => ({
               ...fp,
@@ -605,6 +633,8 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
         set({ syncStatus: "syncing", syncError: null });
 
         try {
+          // Note: MVP specs and pilot plans are not yet synced to cloud
+          // as the database schema doesn't have tables for them yet
           await db.syncWorkshopData(state.cloudOrgId, {
             frictionPoints: state.frictionPoints.map(fp => ({
               ...fp,
@@ -664,8 +694,28 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
       clearSyncError: () => set({ syncError: null }),
     }),
     {
-      name: "forge-workshop-storage",
+      name: "agentmapper-workshop-storage",
       storage: createJSONStorage(() => localStorage),
+      // Migrate data from old storage key if it exists
+      onRehydrateStorage: () => {
+        // Check if old storage exists
+        const oldKey = "forge-workshop-storage";
+        const oldData = localStorage.getItem(oldKey);
+
+        if (oldData) {
+          // Copy old data to new key
+          localStorage.setItem("agentmapper-workshop-storage", oldData);
+          // Remove old key
+          localStorage.removeItem(oldKey);
+          console.log("Migrated workshop data from forge-workshop-storage to agentmapper-workshop-storage");
+        }
+
+        return (state, error) => {
+          if (error) {
+            console.error("Failed to rehydrate workshop state:", error);
+          }
+        };
+      },
       partialize: (state) => ({
         organization: state.organization,
         currentSession: state.currentSession,
