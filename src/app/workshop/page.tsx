@@ -5,9 +5,21 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, Circle, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { useOrganization, useCurrentSession } from "@/store/workshop";
+import { useOrganization, useCurrentSession, useOnboardingComplete } from "@/store/workshop";
 
 const sessions = [
+  {
+    number: 0,
+    title: "AI Strategy Foundation",
+    duration: "2-4 hours",
+    description:
+      "Establish your organization's AI governance approach through strategic exercises. Collect team perspectives, define ethical principles, and make key strategic tradeoffs.",
+    exercises: [
+      { id: "ai-icebreakers", title: "AI Icebreakers", description: "Team alignment on AI timeline and cognitive biases" },
+      { id: "working-principles", title: "Working Principles", description: "Define ethical principles and governance do's/don'ts" },
+      { id: "tradeoff-navigator", title: "Tradeoff Navigator", description: "Strategic decisions on control, priority, and communications" },
+    ],
+  },
   {
     number: 1,
     title: "Orientation & Shared Understanding",
@@ -72,6 +84,7 @@ const sessions = [
 export default function WorkshopPage() {
   const organization = useOrganization();
   const currentSession = useCurrentSession();
+  const onboardingComplete = useOnboardingComplete();
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
@@ -96,9 +109,13 @@ export default function WorkshopPage() {
       {/* Sessions Grid */}
       <div className="space-y-8">
         {sessions.map((session, index) => {
-          const isCompleted = session.number < currentSession;
-          const isCurrent = session.number === currentSession;
-          const isLocked = session.number > currentSession;
+          const isCompleted = session.number === 0
+            ? onboardingComplete
+            : session.number < currentSession;
+          const isCurrent = session.number === 0
+            ? !onboardingComplete
+            : session.number === currentSession;
+          const isLocked = session.number > 0 && !onboardingComplete ? true : session.number > currentSession;
 
           return (
             <motion.div
@@ -142,7 +159,7 @@ export default function WorkshopPage() {
                       </div>
                     </div>
                     {!isLocked && (
-                      <Link href={`/workshop/session-${session.number}`}>
+                      <Link href={session.number === 0 ? "/workshop/onboarding" : `/workshop/session-${session.number}`}>
                         <Button
                           variant={isCurrent ? "primary" : "default"}
                           size="sm"

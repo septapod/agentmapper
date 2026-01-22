@@ -1,12 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Lightbulb, Target, Shield, CheckCircle2, Circle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StepProgress } from "@/components/ui/ProgressBar";
-import { useFutureHeadlines, useOpportunities, useDesignPrinciples } from "@/store/workshop";
+import { useFutureHeadlines, useOpportunities, useDesignPrinciples, useOnboardingComplete } from "@/store/workshop";
 
 const exercises = [
   {
@@ -54,9 +56,17 @@ const exercises = [
 ];
 
 export default function Session1Page() {
+  const router = useRouter();
+  const onboardingComplete = useOnboardingComplete();
   const futureHeadlines = useFutureHeadlines();
   const opportunities = useOpportunities();
   const designPrinciples = useDesignPrinciples();
+
+  useEffect(() => {
+    if (!onboardingComplete) {
+      router.push('/workshop/onboarding');
+    }
+  }, [onboardingComplete, router]);
 
   const getExerciseStatus = (id: string): "pending" | "in-progress" | "completed" => {
     switch (id) {

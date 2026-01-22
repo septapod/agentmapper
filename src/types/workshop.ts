@@ -91,6 +91,39 @@ export interface RoadmapMilestone {
   createdAt: string;
 }
 
+// Onboarding (Session 0) Types - AI Strategy Foundation
+export interface AIIcebreakerResponse {
+  id: string;
+  participantName: string;
+  timelineMonths: number; // 6, 12, 18, 24, 36
+  optimismScore: number; // 1-5 scale
+  createdAt: string;
+}
+
+export interface CognitiveBias {
+  id: string;
+  name: string;
+  description: string;
+  checked: boolean;
+}
+
+export interface AIWorkingPrinciple {
+  id: string;
+  principleType: "human-centered" | "control-accountability" | "observability-explainability" | "improvement-responsiveness";
+  promptingAnswers: Record<string, string>;
+  dos: string[];
+  donts: string[];
+  createdAt: string;
+}
+
+export interface AITradeoff {
+  id: string;
+  topic: "control" | "priority" | "users" | "external-comms" | "internal-comms";
+  sliderValue: number; // 0-100
+  rationale: string;
+  createdAt: string;
+}
+
 // Session 5 Types - Empower Teams
 export interface ScalingChecklistItem {
   id: string;
@@ -133,6 +166,13 @@ export interface NextOpportunity {
 export interface WorkshopState {
   organization: Organization | null;
   currentSession: number;
+
+  // Onboarding (Session 0)
+  aiIcebreakerResponses: AIIcebreakerResponse[];
+  cognitiveBiases: CognitiveBias[];
+  aiWorkingPrinciples: AIWorkingPrinciple[];
+  aiTradeoffs: AITradeoff[];
+  onboardingComplete: boolean;
 
   // Session 1
   futureHeadlines: FutureHeadline[];
