@@ -167,7 +167,7 @@ export default function WorkingPrinciplesPage() {
           className="inline-flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Onboarding
+          Back to Session 1
         </Link>
 
         <div className="flex items-center gap-4 mb-4">
@@ -176,7 +176,7 @@ export default function WorkingPrinciplesPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold">Working Principles</h1>
-            <p className="text-[var(--color-text-muted)]">Exercise 2 of 3 · Onboarding</p>
+            <p className="text-[var(--color-text-muted)]">Exercise 2 of 3 · Session 1</p>
           </div>
         </div>
 

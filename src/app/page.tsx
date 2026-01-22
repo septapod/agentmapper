@@ -350,11 +350,11 @@ export default function Home() {
             {[
               {
                 number: 1,
-                title: "Orientation & Shared Understanding",
-                duration: "2-3 hours",
+                title: "AI Strategy Foundation",
+                duration: "2-4 hours",
                 description:
-                  "Align on what Agentic AI means for your organization. Define aspirations, boundaries, and guardrails.",
-                exercises: ["Future Headlines", "Opportunity Brainstorm", "Design Principles"],
+                  "Build your organization's AI governance foundation. Understand team perspectives, define core principles, and make strategic positioning decisions.",
+                exercises: ["AI Icebreakers", "Working Principles", "Tradeoff Navigator"],
               },
               {
                 number: 2,
