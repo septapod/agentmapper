@@ -46,7 +46,7 @@ export default function FutureStateWorkflowPage() {
         transition={{ delay: 0.1 }}
         className="mb-8"
       >
-        <Card accent="default" hoverable={false}>
+        <Card accent="none" hoverable={false}>
           <CardHeader>
             <CardTitle as="h2" className="flex items-center gap-2">
               <Construction className="w-5 h-5 text-[var(--color-accent)]" />
