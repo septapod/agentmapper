@@ -558,8 +558,11 @@ export const useWorkshopStore = create<WorkshopState & CloudState & VotingState 
           await db.syncWorkshopData(org.id, {
             frictionPoints: state.frictionPoints.map(fp => ({
               ...fp,
-              impactLevel: fp.impactLevel || 0,
-              frequency: fp.frequency || "",
+              // Use valid defaults that satisfy database constraints
+              // impact_level: CHECK (impact_level BETWEEN 1 AND 5)
+              // frequency: CHECK (frequency IN ('daily', 'weekly', 'monthly', 'quarterly'))
+              impactLevel: fp.impactLevel || 3,
+              frequency: fp.frequency || "daily",
               affectedRoles: fp.affectedRoles || [],
             })),
             scoredOpportunities: state.scoredOpportunities,
@@ -638,8 +641,11 @@ export const useWorkshopStore = create<WorkshopState & CloudState & VotingState 
           await db.syncWorkshopData(state.cloudOrgId, {
             frictionPoints: state.frictionPoints.map(fp => ({
               ...fp,
-              impactLevel: fp.impactLevel || 0,
-              frequency: fp.frequency || "",
+              // Use valid defaults that satisfy database constraints
+              // impact_level: CHECK (impact_level BETWEEN 1 AND 5)
+              // frequency: CHECK (frequency IN ('daily', 'weekly', 'monthly', 'quarterly'))
+              impactLevel: fp.impactLevel || 3,
+              frequency: fp.frequency || "daily",
               affectedRoles: fp.affectedRoles || [],
             })),
             scoredOpportunities: state.scoredOpportunities,
