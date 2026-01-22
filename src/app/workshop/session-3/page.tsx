@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { StepProgress } from "@/components/ui/ProgressBar";
 import { useMVPSpecs } from "@/store/workshop";
 import { ExerciseDataSummary } from "@/components/workshop/ExerciseDataSummary";
+import { SessionSummary } from "@/components/workshop/SessionSummary";
 
 const exercises = [
   {
@@ -68,6 +69,9 @@ export default function Session3Page() {
           where humans stay in the loop, and how you'll measure success.
         </p>
       </motion.div>
+
+      {/* Session Summary */}
+      <SessionSummary sessionNumber={3} />
 
       {/* Progress */}
       <motion.div

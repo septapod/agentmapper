@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { StepProgress } from "@/components/ui/ProgressBar";
 import { useScalingChecklist, useTrainingPlan, useLessonsLearned, useNextOpportunities } from "@/store/workshop";
 import { ExerciseDataSummary } from "@/components/workshop/ExerciseDataSummary";
+import { SessionSummary } from "@/components/workshop/SessionSummary";
 
 const exercises = [
   {
@@ -128,6 +129,9 @@ export default function Session5Page() {
           establish ownership, and identify the next opportunities for AI-enabled transformation.
         </p>
       </motion.div>
+
+      {/* Session Summary */}
+      <SessionSummary sessionNumber={5} />
 
       {/* Progress */}
       <motion.div

@@ -6,6 +6,7 @@ import { ArrowRight, CheckCircle2, Circle, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useOrganization, useCurrentSession } from "@/store/workshop";
+import { WorkshopProgressSummary } from "@/components/workshop/WorkshopProgressSummary";
 
 const sessions = [
   {
@@ -92,6 +93,9 @@ export default function WorkshopPage() {
           in order, completing the exercises to build a comprehensive implementation plan.
         </p>
       </motion.div>
+
+      {/* Workshop Progress Summary */}
+      <WorkshopProgressSummary />
 
       {/* Sessions Grid */}
       <div className="space-y-8">

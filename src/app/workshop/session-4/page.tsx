@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { StepProgress } from "@/components/ui/ProgressBar";
 import { usePilotPlans, useRoadmapMilestones } from "@/store/workshop";
 import { ExerciseDataSummary } from "@/components/workshop/ExerciseDataSummary";
+import { SessionSummary } from "@/components/workshop/SessionSummary";
 
 const exercises = [
   {
@@ -88,6 +89,9 @@ export default function Session4Page() {
           from MVP to scaled solution.
         </p>
       </motion.div>
+
+      {/* Session Summary */}
+      <SessionSummary sessionNumber={4} />
 
       {/* Progress */}
       <motion.div

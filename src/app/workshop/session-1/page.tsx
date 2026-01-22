@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { StepProgress } from "@/components/ui/ProgressBar";
 import { useIcebreakerResponses, useCognitiveBiases, useWorkingPrinciples, useTradeoffs } from "@/store/workshop";
 import { ExerciseDataSummary } from "@/components/workshop/ExerciseDataSummary";
+import { SessionSummary } from "@/components/workshop/SessionSummary";
 
 const exercises = [
   {
@@ -110,6 +111,9 @@ export default function Session1Page() {
           all future AI implementation work.
         </p>
       </motion.div>
+
+      {/* Session Summary */}
+      <SessionSummary sessionNumber={1} />
 
       {/* Progress */}
       <motion.div

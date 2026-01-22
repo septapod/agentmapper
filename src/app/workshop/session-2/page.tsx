@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { StepProgress } from "@/components/ui/ProgressBar";
 import { useFrictionPoints, useScoredOpportunities } from "@/store/workshop";
 import { ExerciseDataSummary } from "@/components/workshop/ExerciseDataSummary";
+import { SessionSummary } from "@/components/workshop/SessionSummary";
 
 const exercises = [
   {
@@ -125,6 +126,9 @@ export default function Session2Page() {
           to pursue as pilots.
         </p>
       </motion.div>
+
+      {/* Session Summary */}
+      <SessionSummary sessionNumber={2} />
 
       {/* Progress */}
       <motion.div
