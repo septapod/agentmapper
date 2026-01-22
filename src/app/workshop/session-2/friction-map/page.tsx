@@ -412,12 +412,12 @@ export default function FrictionMapPage() {
           </Button>
         </Link>
         {frictionPoints.length > 0 && (
-          <Link href="/workshop/session-3">
+          <Link href="/workshop/session-2/opportunity-scoring">
             <Button
               variant="primary"
               rightIcon={<ArrowRight className="w-4 h-4" />}
             >
-              Continue to Session 3
+              Continue to Opportunity Scoring
             </Button>
           </Link>
         )}

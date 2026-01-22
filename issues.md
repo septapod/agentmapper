@@ -5,14 +5,16 @@
 This document catalogs all identified issues in the AgentMapper application, organized by severity. Each issue includes root cause analysis, user impact, recommended solutions, best practice citations, and testing strategies.
 
 **Issue Breakdown:**
-- **Critical:** 4 issues ✅ **ALL FIXED (2026-01-22)**
-- **High:** 12 issues (navigation, validation, missing features)
-- **Medium:** 15 issues (UX improvements, code quality)
-- **Low:** 8 issues (polish, accessibility enhancements)
-- **Total:** 39 issues identified
+- **Critical:** 4 issues ✅ **FIXED (2026-01-22)** + 1 NEW 🚨 **BLOCKER** (Session 3 missing pages)
+- **High:** 14 issues (navigation, validation, missing features)
+- **Major:** 21 issues (UX, form behavior, accessibility)
+- **Minor:** 13 issues (polish, responsiveness)
+- **Enhancements:** 3 user requests (export, timestamps, simplification)
+- **Total:** 53 issues identified (39 original + 14 from QA testing)
 
-**Estimated Fix Time:** 3-4 weeks (assuming full-time development)
-**Status:** Week 1 Critical Fixes Complete
+**Estimated Fix Time:** 4-6 weeks (assuming full-time development)
+**Status:** Week 1 Critical Data Fixes Complete | Week 2 Must Address Session 3 Blocker
+**Last Updated:** January 22, 2026 (after CEO Testing Agent QA report)
 
 **Key Findings:**
 - The application has a solid architectural foundation with good TypeScript practices
@@ -522,13 +524,90 @@ export default function FrictionMapPage() {
 
 ## High Issues
 
+### H0. Session 3 Exercises Missing (BLOCKER) 🚨
+
+**Severity:** CRITICAL (Upgraded from audit)
+**Category:** Implementation / Showstopper
+**Source:** QA Report - CEO Testing Agent (Jan 21, 2026)
+**Status:** ❌ Not Started
+
+**Problem Description:**
+Four of five Session 3 exercises are completely missing - no page files exist. Users see blank white screens with only timestamps. This blocks completion of Session 3 entirely.
+
+**Location:** `/src/app/workshop/session-3/` directory
+
+**Missing Exercise Pages:**
+1. `pattern-matching/page.tsx` - Not implemented
+2. `future-state-workflow/page.tsx` - Not implemented
+3. `risk-governance/page.tsx` - Not implemented
+4. `mvp-charter/page.tsx` - Not implemented
+
+**Existing:**
+- `mvp-spec/page.tsx` - ✅ Exists (but named differently than layout expects)
+
+**Root Cause:**
+Layout configuration in `/src/app/workshop/layout.tsx` (lines 35-40) references exercises that were never created:
+```typescript
+{
+  number: 3,
+  title: "Organize the Work",
+  exercises: [
+    { id: "pattern-matching", title: "Pattern Matching" },
+    { id: "future-state-workflow", title: "Workflow Design" },
+    { id: "risk-governance", title: "Risk Assessment" },
+    { id: "mvp-charter", title: "MVP Charter" },  // mvp-spec exists, not mvp-charter
+  ],
+}
+```
+
+**User Impact:**
+- **Total blocker** - Cannot complete Session 3
+- Forces abandonment of tool
+- "Nearly abandoned the workshop" per QA feedback
+- 3-4 hours of work in Sessions 1-2 becomes useless
+- CEO/executive time completely wasted
+
+**Recommended Solution:**
+
+**Immediate (Week 2 Priority 1):**
+1. Create stub pages for all 4 missing exercises
+2. Add "Coming Soon" messaging with Session 3 overview
+3. Allow users to skip to Session 4 with warning
+4. Update layout to reflect current implementation state
+
+**Proper Fix (Week 3):**
+1. Design and implement Pattern Matching exercise
+2. Design and implement Workflow Design exercise
+3. Design and implement Risk Assessment exercise
+4. Rename mvp-spec to mvp-charter or update layout reference
+5. Ensure data flows correctly between exercises
+
+**Files to Create:**
+- `/src/app/workshop/session-3/pattern-matching/page.tsx`
+- `/src/app/workshop/session-3/future-state-workflow/page.tsx`
+- `/src/app/workshop/session-3/risk-governance/page.tsx`
+- `/src/app/workshop/session-3/mvp-charter/page.tsx` (or rename mvp-spec)
+
+**Testing Strategy:**
+1. Navigate to each Session 3 exercise
+2. Verify pages load with content (not blank)
+3. Verify navigation between exercises works
+4. Verify data persistence across session
+
+**Priority:** IMMEDIATE - This is a complete blocker for all users.
+
+---
+
 ### H1. Friction Map Navigation Bypasses Session 2 Exercises
 
 **Severity:** HIGH
 **Category:** Functional / User Journey
+**Source:** Original audit + QA Report confirmation
 
 **Problem Description:**
 The "Continue" button at the bottom of the Friction Mapping exercise (Session 2, Exercise 1) links directly to `/workshop/session-3` instead of continuing to the next Session 2 exercise (Opportunity Scoring). This completely bypasses exercises 2, 3, and 4 of Session 2.
+
+**QA Report Quote:** "After adding friction points, a 'Continue to Session 3' button appears even though other exercises remain. Selecting it skips Opportunity Scoring and Dot Voting."
 
 **Location:** `/src/app/workshop/session-2/friction-map/page.tsx` (lines 397-408)
 
@@ -1356,12 +1435,455 @@ _Due to length constraints, this document continues with remaining issues. Each 
 
 ---
 
+## New Issues from QA Testing (CEO Testing Agent - Jan 21, 2026)
+
+### QA1. Opportunity Scoring Opens Blank Tab
+
+**Severity:** HIGH
+**Category:** Functional / Navigation Bug
+**Source:** QA Report (page 2, Critical)
+
+**Problem Description:**
+Clicking "Opportunity Scoring" from the friction list opens a new blank tab (`about:blank`) instead of navigating within the workshop.
+
+**Location:** Navigation link in Session 2 sidebar or friction map page
+
+**Root Cause:**
+Likely `target="_blank"` attribute on Link component or incorrect href format.
+
+**User Impact:**
+- Disrupts workflow
+- Users think site is broken
+- Must close tab and click again
+
+**Recommended Solution:**
+1. Check all Session 2 navigation links for `target="_blank"`
+2. Ensure proper Next.js Link usage without external link behavior
+3. Test all sidebar navigation links
+
+**Priority:** Week 2 - High
+
+---
+
+### QA2. Working Principles Enter Key Not Working
+
+**Severity:** MAJOR
+**Category:** UX / Form Behavior
+**Source:** QA Report (page 2, Major)
+
+**Problem Description:**
+The input boxes in Working Principles do not accept the Enter key. Users must click "Add Do" or "Add Don't" buttons to add items. This is unexpected form behavior.
+
+**Location:** `/src/app/workshop/session-1/working-principles/page.tsx`
+
+**Root Cause:**
+Input components don't have `onKeyDown` handlers to detect Enter key presses.
+
+**User Impact:**
+- Slows down data entry
+- Confusion for users expecting standard form behavior
+- Frustration with manual clicking
+
+**Recommended Solution:**
+```typescript
+const handleKeyDown = (e: React.KeyboardEvent, type: 'do' | 'dont', index: number) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    if (type === 'do' && dos[index].trim()) {
+      addDo();
+    } else if (type === 'dont' && donts[index].trim()) {
+      addDont();
+    }
+  }
+};
+
+// In Input component:
+<Input
+  onKeyDown={(e) => handleKeyDown(e, 'do', i)}
+  // ... other props
+/>
+```
+
+**Priority:** Week 2 - Major
+
+---
+
+### QA3. Duplicate Blank Boxes in Working Principles
+
+**Severity:** MAJOR
+**Category:** Functional / Bug
+**Source:** QA Report (page 2, Major)
+
+**Problem Description:**
+Duplicate blank boxes appear in Working Principles and cannot be removed.
+
+**Location:** `/src/app/workshop/session-1/working-principles/page.tsx`
+
+**Root Cause:**
+Likely the `removeDo` and `removeDont` functions don't allow removal when `length === 1`, but the UI may be creating duplicates through state updates.
+
+**Code Issue:**
+```typescript
+const removeDo = (index: number) => {
+  if (dos.length > 1) {  // ← Blocks removal when only 1 item
+    setDos(dos.filter((_, i) => i !== index));
+  }
+};
+```
+
+**User Impact:**
+- Cannot clean up UI
+- Confusing visual clutter
+- May submit blank entries
+
+**Recommended Solution:**
+1. Allow removal of any item, even if it's the last one (reset to single empty field)
+2. Add visual confirmation that item will be removed
+3. Filter out blank entries on save (already implemented)
+
+**Priority:** Week 2 - Major
+
+---
+
+### QA4. Cognitive Bias Selection Issues
+
+**Severity:** MAJOR
+**Category:** UX / Interactive Elements
+**Source:** QA Report (page 2, Major)
+
+**Problem Description:**
+Small click targets in AI Icebreakers make it hard to select timelines and sentiments. Selections sometimes reset unexpectedly and require double-clicking.
+
+**Location:** `/src/app/workshop/session-1/ai-icebreakers/page.tsx`
+
+**User Impact:**
+- Frustration with small targets
+- Mis-recording of responses
+- Requires multiple clicks
+
+**Recommended Solution:**
+1. Increase click target size to min 44x44px (WCAG AAA standard)
+2. Add proper loading/selected state management
+3. Investigate reset issue - may be related to our vote race condition fix pattern
+
+**Priority:** Week 3 - Major (Accessibility)
+
+---
+
+### QA5. Voting Radio Buttons Unlabeled
+
+**Severity:** MAJOR
+**Category:** UX / Accessibility
+**Source:** QA Report (page 2, Major)
+
+**Problem Description:**
+After dot voting, selecting friction points for pilots requires clicking small circles. Radio buttons are unlabeled and easy to miss. No confirmation prompt.
+
+**Location:** Dot voting results page
+
+**User Impact:**
+- Could lead to incorrect selection
+- Confusion about what's selected
+- No undo mechanism
+
+**Recommended Solution:**
+1. Add visible labels next to radio buttons
+2. Increase radio button size
+3. Add confirmation dialog: "You've selected X opportunities for pilots. Continue?"
+4. Show visual feedback when selected
+
+**Priority:** Week 3 - Major
+
+---
+
+### QA6. MVP Tool Selection Unclear
+
+**Severity:** MAJOR
+**Category:** UX / Visual Feedback
+**Source:** QA Report (page 3, Major)
+
+**Problem Description:**
+In the MVP specification form, tool selection toggles highlight unpredictably. It's unclear which tools have been selected.
+
+**Location:** `/src/app/workshop/session-3/mvp-spec/page.tsx`
+
+**User Impact:**
+- Users unsure which tools are included
+- Final card may not reflect intended choices
+
+**Recommended Solution:**
+1. Use checkbox components with clear checked states
+2. Add visual summary: "X tools selected"
+3. Show selected tools in confirmation view
+4. Use consistent toggle styling (background color, checkmark, etc.)
+
+**Priority:** Week 3 - Major
+
+---
+
+### QA7. Vote Counter Doesn't Update Immediately
+
+**Severity:** MINOR
+**Category:** UX / Real-time Feedback
+**Source:** QA Report (page 3, Minor)
+
+**Problem Description:**
+The "votes remaining" counter doesn't update immediately after each click. It updates only when the pointer is moved away.
+
+**Location:** `/src/app/workshop/session-2/dot-voting/page.tsx`
+
+**Root Cause:**
+Likely related to our voting debounce fix - the 300ms timeout may be delaying state updates.
+
+**User Impact:**
+- Poor feedback during interaction
+- Users unsure if vote registered
+
+**Recommended Solution:**
+1. Update counter immediately (optimistic update)
+2. Keep debounce for backend sync but not UI feedback
+3. Show visual animation when vote cast
+
+**Priority:** Week 3 - Minor
+
+---
+
+### QA8. Progress Bar Stuck at 0%
+
+**Severity:** HIGH (Upgraded from TODO)
+**Category:** Functional / Progress Tracking
+**Source:** QA Report (page 1, Critical) + Original Audit
+
+**Problem Description:**
+The progress bar for sessions 1-3 remains at 0% even after completing exercises. The "Continue to Tradeoff Navigator" button remains disabled despite filling all fields.
+
+**Location:** `/src/app/workshop/layout.tsx` (line 86)
+
+**Root Cause:**
+```typescript
+const completedExercises = 0; // TODO: Calculate from state
+```
+
+**User Impact:**
+- Creates confusion about whether work is saved
+- May lead users to believe they must repeat steps
+- Trust in system broken
+
+**Recommended Solution:**
+Already documented in H6. This confirms the TODO is actually breaking the user experience.
+
+**Priority:** Week 2 - High (was already identified)
+
+---
+
+### QA9. "Continue to Session 4" Appears Too Early
+
+**Severity:** MINOR
+**Category:** UX / Navigation
+**Source:** QA Report (page 3, Minor)
+
+**Problem Description:**
+The "Continue to Session 4" button appears before completing all sub-tasks in Session 3.
+
+**Location:** Session 3 pages
+
+**User Impact:**
+- Users can skip required exercises
+- Breaks intended workshop flow
+
+**Recommended Solution:**
+1. Show navigation buttons only when prerequisite tasks completed
+2. Disable with tooltip: "Complete all Session 3 exercises first"
+3. Visual indicator showing X/4 exercises complete
+
+**Priority:** Week 2 - Related to H2 (dependency validation)
+
+---
+
+### QA10. Home Page No Auto-Focus
+
+**Severity:** MINOR
+**Category:** UX / Usability
+**Source:** QA Report (page 3, Minor)
+
+**Problem Description:**
+The organization name field does not auto-focus when starting the workshop.
+
+**Location:** `/src/app/page.tsx` - home page form
+
+**Recommended Solution:**
+```typescript
+<Input
+  autoFocus
+  label="Organization Name"
+  // ... other props
+/>
+```
+
+**Priority:** Week 4 - Polish
+
+---
+
+### QA11. Working Principles Entry Truncated
+
+**Severity:** MINOR
+**Category:** Bug / Data Display
+**Source:** QA Report (page 3, Minor)
+
+**Problem Description:**
+One of the "Don't" entries was truncated and could not be edited or deleted.
+
+**Location:** `/src/app/workshop/session-1/working-principles/page.tsx`
+
+**Root Cause:**
+Likely CSS overflow or max-length constraint. Also may be related to QA3 (cannot delete items).
+
+**Recommended Solution:**
+1. Allow editing of saved items
+2. Add edit/delete buttons to saved principle cards
+3. Ensure text displays fully (remove truncation or add expand)
+
+**Priority:** Week 3 - Minor
+
+---
+
+### QA12. Responsive Design Issues
+
+**Severity:** MINOR
+**Category:** UI / Responsive
+**Source:** QA Report (page 3, Minor)
+
+**Problem Description:**
+Some text and buttons overflow on smaller screens.
+
+**Recommended Solution:**
+1. Comprehensive responsive design review
+2. Test at 375px, 768px, 1024px, 1920px breakpoints
+3. Fix overflow with proper text wrapping
+4. Ensure touch targets are 44x44px minimum on mobile
+
+**Priority:** Week 3-4 - Polish
+
+---
+
+## Enhancement Requests from QA
+
+### E1. Export Capabilities (PDF/Spreadsheet)
+
+**Priority:** HIGH (User Request)
+**Source:** QA Report (page 3, Enhancements)
+
+**Description:**
+"Provide downloadable summaries (PDF or spreadsheet) of all inputs (principles, friction points, scores, MVP specifications). This would allow teams to use outputs without copying from the UI."
+
+**User Value:**
+- CEO/executives need shareable reports
+- Teams need to use outputs in other tools
+- Supports offline work
+
+**Implementation Ideas:**
+1. "Export Workshop Summary" button in main nav
+2. PDF generator using react-pdf or puppeteer
+3. CSV/Excel export for tabular data
+4. Includes charts/graphs from priority matrix
+
+**Priority:** Week 3-4 - High user value
+
+---
+
+### E2. "Last Saved" Timestamps
+
+**Priority:** MEDIUM
+**Source:** QA Report (page 3, Enhancements)
+
+**Description:**
+"Display 'last saved' timestamps so busy executives can leave and resume with confidence."
+
+**User Value:**
+- Trust in data persistence
+- Confidence to step away and resume later
+- Reduces anxiety about progress loss
+
+**Implementation:**
+Already have `lastSaved` in store. Just need to display it:
+```typescript
+{lastSaved && (
+  <p className="text-xs text-muted">
+    Last saved: {formatDistanceToNow(new Date(lastSaved))} ago
+  </p>
+)}
+```
+
+**Priority:** Week 2 - Quick win, high value
+
+---
+
+### E3. Simplify Voting and Prioritization
+
+**Priority:** LOW (Design Decision)
+**Source:** QA Report (page 4, Enhancements)
+
+**Description:**
+"Consider reducing the number of steps (e.g., combine opportunity scoring and matrix placement) to save time; dot voting could be optional for small teams."
+
+**User Feedback:**
+"Dot voting and the priority matrix felt like ceremony rather than substance. Assigning arbitrary scores did not change the final selection and could be streamlined."
+
+**Consideration:**
+This is a framework design decision (NOBL's methodology). May want to:
+1. Make dot voting optional
+2. Add "Quick Path" for solo users
+3. Combine scoring + matrix into single view
+
+**Priority:** Week 4+ - Requires framework redesign discussion
+
+---
+
+## QA Testing Summary
+
+**Tester:** CEO Testing Agent (Virtual AI Agent simulating executive user)
+**Date:** January 21, 2026
+**Sessions Completed:** 1 (2 hours), 2 (3 hours), partial 3 (30 min)
+**Session 3:** Could not complete due to blank page bugs
+**Total Time:** ~5.5 hours (+ 1-2 hours bug-induced delays)
+
+**Key Insights:**
+1. **What almost made them quit:** Blank pages in Session 3 + losing progress
+2. **What surprised them:** AI strategy framework was valuable, realized how manual lending processes are
+3. **What felt like busywork:** Dot voting and priority matrix felt like ceremony
+4. **Bottom line:** Concept is strong, but implementation is unstable for busy executives
+
+**Critical Takeaway:**
+Fixing critical bugs, simplifying navigation and providing exportable outputs are essential before the tool can deliver real value.
+
+---
+
+## Updated Issue Count
+
+**After QA Review:**
+- **CRITICAL:** 5 issues (was 4) - Added H0 (Session 3 missing pages)
+- **HIGH:** 14 issues (was 12) - Added 2 from QA
+- **MAJOR:** 21 issues (was 15) - Added 6 from QA
+- **MINOR:** 13 issues (was 8) - Added 5 from QA
+- **ENHANCEMENTS:** 3 new requests from QA
+- **TOTAL:** 53 issues (was 39)
+
+---
+
 ## Changelog
+
+**Version:** 1.1
+**Date:** January 22, 2026
+**Updates:**
+- Added 14 new issues from Chartway Credit Union QA testing
+- Upgraded Session 3 missing pages to CRITICAL severity
+- Added 3 enhancement requests from real user feedback
+- Updated issue count: 53 total (from 39)
+- Confirmed several existing issues through real-world testing
 
 **Version:** 1.0
 **Date:** January 22, 2026
 **Author:** Comprehensive Audit Team
-
 **Changes:**
 - Initial comprehensive audit completed
 - 39 issues identified across 4 severity levels

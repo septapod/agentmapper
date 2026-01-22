@@ -149,6 +149,17 @@ export default function WorkingPrinciplesPage() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, type: 'do' | 'dont') => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (type === 'do') {
+        addDo();
+      } else {
+        addDont();
+      }
+    }
+  };
+
   const isComplete = savedPrinciples.length === 4 &&
     savedPrinciples.every(p => p.dos.length >= 2 && p.donts.length >= 2);
 
@@ -244,6 +255,7 @@ export default function WorkingPrinciplesPage() {
                     placeholder="e.g., Always keep a human in the loop for final decisions"
                     value={item}
                     onChange={(e) => updateDo(idx, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, 'do')}
                     className="flex-1"
                   />
                   {dos.length > 1 && (
@@ -283,6 +295,7 @@ export default function WorkingPrinciplesPage() {
                     placeholder="e.g., Never deploy AI without testing on real scenarios"
                     value={item}
                     onChange={(e) => updateDont(idx, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e, 'dont')}
                     className="flex-1"
                   />
                   {donts.length > 1 && (
