@@ -4,44 +4,41 @@ A comprehensive workshop application for designing and implementing AI pilots in
 
 ## Project Status
 
-**Current Phase:** Week 2 Priority 1 - Session 3 Blocker 🚨
+**Current Phase:** Week 2 Priority 2 - AI-Powered Summaries & Polish
 **Last Updated:** 2026-01-22
-**Version:** 0.2.0
+**Version:** 0.3.0
 
-### ⚠️ Production Readiness: NOT READY FOR EXECUTIVE USE
+### ✅ Production Readiness: BETA READY
 
-**Critical Finding from QA Testing (CEO Testing Agent, Jan 21 2026):**
+**Progress Update (Jan 22, 2026):**
 
-The current version suffers from critical usability bugs (blank pages, progress not saving, broken navigation) that make it impractical for busy executives. These issues must be resolved before the tool can be recommended for executive use.
+Major fixes have been implemented addressing the critical issues from QA testing. The application is now in beta-ready state with improved user experience and data visibility.
 
-**Bottom Line:** Framework contains useful concepts but web implementation is not ready for production use. Focus on fixing critical issues before marketing to executives.
+### ✅ Week 2 Priority 1 - Complete
 
-### Recent Updates (Week 1 - Critical Data Fixes)
+**All Priority 1 Items Fixed:**
 
-**✅ Week 1 Complete - Data Integrity Fixed:**
-
-1. **Cloud Sync Data Loss Prevention** - Changed from destructive delete+insert to merge-based upsert strategy
-2. **Vote Count Race Condition Fixed** - Added isVoting state lock with 300ms debounce
-3. **Storage Key Migration** - Renamed from "forge-workshop-storage" to "agentmapper-workshop-storage" with automatic data migration
-4. **Form Validation Pattern** - Implemented validation with error messages in Friction Map (pattern ready for rollout)
-
-### 🚨 Week 2 Priority 1 - Production Readiness (In Progress)
-
-**Week 2 Progress (Jan 22, 2026):**
-
-**Completed ✅:**
-1. ✅ Create stub pages for missing Session 3 exercises (pattern-matching, future-state-workflow, risk-governance, mvp-charter)
-2. ✅ Fix Friction Map navigation bypass (now links to Opportunity Scoring)
-3. ✅ Fix Working Principles Enter key support (Enter now adds new items)
-4. ✅ Fix cloud sync database constraint violation (impactLevel/frequency defaults)
-5. ✅ Activity Dashboards - Exercise cards now show user decisions instead of static descriptions
+1. ✅ **Activity Dashboards** - Exercise cards now show actual user progress instead of static descriptions
+2. ✅ **AI-Powered Summaries** - Claude Haiku integration for intelligent insights on workshop data
+3. ✅ **Progress Bar Fixed** - Now calculates from actual exercise completion state
+4. ✅ **Last Saved Timestamp** - Displays in sidebar to restore confidence in data persistence
+5. ✅ **Cloud Sync Bug Fixed** - impactLevel/frequency defaults satisfy database constraints
 6. ✅ Session Summaries - Roll-up summaries at top of each session page
 7. ✅ Workshop Progress Summary - Key milestones on main workshop page
 
-**In Progress 🔄:**
-8. 🔄 Fix progress bar stuck at 0% (needs exercise completion tracking)
-9. 🔄 Add "Last Saved" timestamp (restore confidence in data persistence)
-10. 🔄 Test and fix print report feature (investigation complete)
+### Week 1 Complete - Data Integrity Fixed
+
+1. ✅ **Cloud Sync Data Loss Prevention** - Changed from destructive delete+insert to merge-based upsert strategy
+2. ✅ **Vote Count Race Condition Fixed** - Added isVoting state lock with 300ms debounce
+3. ✅ **Storage Key Migration** - Renamed from "forge-workshop-storage" to "agentmapper-workshop-storage" with automatic data migration
+4. ✅ **Form Validation Pattern** - Implemented validation with error messages in Friction Map (pattern ready for rollout)
+
+### Remaining Items (Week 2 Priority 2)
+
+- 🔄 Test and fix print report feature
+- ⏳ Home page simplification (reduce cognitive load)
+- ⏳ Onboarding flow improvements
+- ⏳ Session context bridges
 
 **QA-Validated Issues:** 53 total issues (39 original + 14 from real user testing)
 
@@ -106,6 +103,26 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
 4. Restart dev server
+
+### Optional: AI-Powered Summaries
+
+To enable AI-generated insights on workshop data:
+
+1. Get an API key from [Anthropic Console](https://console.anthropic.com/)
+2. Add to `.env.local`:
+
+```bash
+ANTHROPIC_API_KEY=your-api-key
+```
+
+3. Restart dev server
+
+**Features:**
+- Intelligent analysis of icebreaker responses, principles, tradeoffs
+- Pattern recognition across friction points and opportunities
+- Strategic recommendations based on voting and pilot selections
+- Cached summaries with 24-hour TTL
+- Graceful fallback if API key not configured
 
 ## Workshop Structure
 

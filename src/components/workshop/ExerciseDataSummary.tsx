@@ -1,6 +1,7 @@
 "use client";
 
 import { useIcebreakerResponses, useCognitiveBiases, useWorkingPrinciples, useTradeoffs, useFrictionPoints, useScoredOpportunities, useMVPSpecs, usePilotPlans, useRoadmapMilestones, useScalingChecklist, useTrainingPlan, useLessonsLearned, useNextOpportunities } from "@/store/workshop";
+import { AISummaryCard } from "./AISummaryCard";
 
 // Helper to truncate text with ellipsis
 const truncate = (text: string, maxLength: number) => {
@@ -36,9 +37,10 @@ const quadrantLabels: Record<string, string> = {
 interface ExerciseDataSummaryProps {
   exerciseId: string;
   variant?: "compact" | "full";
+  showAISummary?: boolean;
 }
 
-export function ExerciseDataSummary({ exerciseId, variant = "compact" }: ExerciseDataSummaryProps) {
+export function ExerciseDataSummary({ exerciseId, variant = "compact", showAISummary = false }: ExerciseDataSummaryProps) {
   // Session 1 data
   const icebreakerResponses = useIcebreakerResponses();
   const biases = useCognitiveBiases();
@@ -67,47 +69,53 @@ export function ExerciseDataSummary({ exerciseId, variant = "compact" }: Exercis
     case "ai-icebreakers": {
       if (icebreakerResponses.length === 0) return null;
       const selectedBiases = biases.filter(b => b.checked);
+      const aiData = { responses: icebreakerResponses, biases: selectedBiases };
 
       return (
-        <div className="space-y-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
-              Team Perspectives ({icebreakerResponses.length} participants)
-            </p>
-            <div className="space-y-2">
-              {icebreakerResponses.slice(0, variant === "compact" ? 3 : undefined).map((resp) => (
-                <div key={resp.id} className="flex items-center justify-between bg-[var(--color-bg)] rounded p-2">
-                  <span className="font-medium text-sm">{resp.participantName}</span>
-                  <div className="flex gap-4 text-xs text-[var(--color-text-muted)]">
-                    <span>Impact: <span className="text-[var(--color-text)]">{resp.impactScore}/4</span></span>
-                    <span>Optimism: <span className="text-[var(--color-text)]">{resp.optimismScore}/4</span></span>
-                  </div>
-                </div>
-              ))}
-              {variant === "compact" && icebreakerResponses.length > 3 && (
-                <p className="text-xs text-[var(--color-text-muted)]">+{icebreakerResponses.length - 3} more participants</p>
-              )}
-            </div>
-          </div>
-
-          {selectedBiases.length > 0 && (
+        <>
+          <div className="space-y-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
-                Biases Discussed
+                Team Perspectives ({icebreakerResponses.length} participants)
               </p>
-              <div className="flex flex-wrap gap-1">
-                {selectedBiases.slice(0, variant === "compact" ? 4 : undefined).map((bias) => (
-                  <span key={bias.id} className="px-2 py-0.5 text-xs bg-[var(--color-accent)]/10 text-[var(--color-accent)] rounded">
-                    {bias.name}
-                  </span>
+              <div className="space-y-2">
+                {icebreakerResponses.slice(0, variant === "compact" ? 3 : undefined).map((resp) => (
+                  <div key={resp.id} className="flex items-center justify-between bg-[var(--color-bg)] rounded p-2">
+                    <span className="font-medium text-sm">{resp.participantName}</span>
+                    <div className="flex gap-4 text-xs text-[var(--color-text-muted)]">
+                      <span>Impact: <span className="text-[var(--color-text)]">{resp.impactScore}/4</span></span>
+                      <span>Optimism: <span className="text-[var(--color-text)]">{resp.optimismScore}/4</span></span>
+                    </div>
+                  </div>
                 ))}
-                {variant === "compact" && selectedBiases.length > 4 && (
-                  <span className="px-2 py-0.5 text-xs text-[var(--color-text-muted)]">+{selectedBiases.length - 4} more</span>
+                {variant === "compact" && icebreakerResponses.length > 3 && (
+                  <p className="text-xs text-[var(--color-text-muted)]">+{icebreakerResponses.length - 3} more participants</p>
                 )}
               </div>
             </div>
+
+            {selectedBiases.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
+                  Biases Discussed
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {selectedBiases.slice(0, variant === "compact" ? 4 : undefined).map((bias) => (
+                    <span key={bias.id} className="px-2 py-0.5 text-xs bg-[var(--color-accent)]/10 text-[var(--color-accent)] rounded">
+                      {bias.name}
+                    </span>
+                  ))}
+                  {variant === "compact" && selectedBiases.length > 4 && (
+                    <span className="px-2 py-0.5 text-xs text-[var(--color-text-muted)]">+{selectedBiases.length - 4} more</span>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+          {showAISummary && variant === "full" && (
+            <AISummaryCard type="exercise" id="ai-icebreakers" data={aiData} />
           )}
-        </div>
+        </>
       );
     }
 
@@ -115,33 +123,38 @@ export function ExerciseDataSummary({ exerciseId, variant = "compact" }: Exercis
       if (workingPrinciples.length === 0) return null;
 
       return (
-        <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
-            AI Governance Principles ({workingPrinciples.length}/4 defined)
-          </p>
-          <div className="grid grid-cols-1 gap-2">
-            {workingPrinciples.slice(0, variant === "compact" ? 2 : undefined).map((principle) => (
-              <div key={principle.id} className="bg-[var(--color-bg)] rounded p-3">
-                <p className="font-medium text-sm text-[var(--color-accent)] mb-1">
-                  {principleLabels[principle.principleType] || principle.principleType}
-                </p>
-                {principle.dos.length > 0 && (
-                  <p className="text-xs text-[var(--color-text-body)]">
-                    <span className="text-[var(--color-accent-teal)]">Do:</span> {truncate(principle.dos[0], 60)}
+        <>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
+              AI Governance Principles ({workingPrinciples.length}/4 defined)
+            </p>
+            <div className="grid grid-cols-1 gap-2">
+              {workingPrinciples.slice(0, variant === "compact" ? 2 : undefined).map((principle) => (
+                <div key={principle.id} className="bg-[var(--color-bg)] rounded p-3">
+                  <p className="font-medium text-sm text-[var(--color-accent)] mb-1">
+                    {principleLabels[principle.principleType] || principle.principleType}
                   </p>
-                )}
-                {principle.donts.length > 0 && (
-                  <p className="text-xs text-[var(--color-text-body)]">
-                    <span className="text-[var(--color-accent-coral)]">Don't:</span> {truncate(principle.donts[0], 60)}
-                  </p>
-                )}
-              </div>
-            ))}
-            {variant === "compact" && workingPrinciples.length > 2 && (
-              <p className="text-xs text-[var(--color-text-muted)]">+{workingPrinciples.length - 2} more principles</p>
-            )}
+                  {principle.dos.length > 0 && (
+                    <p className="text-xs text-[var(--color-text-body)]">
+                      <span className="text-[var(--color-accent-teal)]">Do:</span> {truncate(principle.dos[0], 60)}
+                    </p>
+                  )}
+                  {principle.donts.length > 0 && (
+                    <p className="text-xs text-[var(--color-text-body)]">
+                      <span className="text-[var(--color-accent-coral)]">Don't:</span> {truncate(principle.donts[0], 60)}
+                    </p>
+                  )}
+                </div>
+              ))}
+              {variant === "compact" && workingPrinciples.length > 2 && (
+                <p className="text-xs text-[var(--color-text-muted)]">+{workingPrinciples.length - 2} more principles</p>
+              )}
+            </div>
           </div>
-        </div>
+          {showAISummary && variant === "full" && (
+            <AISummaryCard type="exercise" id="working-principles" data={{ principles: workingPrinciples }} />
+          )}
+        </>
       );
     }
 
@@ -150,38 +163,43 @@ export function ExerciseDataSummary({ exerciseId, variant = "compact" }: Exercis
       if (completedTradeoffs.length === 0) return null;
 
       return (
-        <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
-            Strategic Positions ({completedTradeoffs.length}/5 defined)
-          </p>
-          <div className="space-y-2">
-            {completedTradeoffs.slice(0, variant === "compact" ? 3 : undefined).map((tradeoff) => {
-              const labels = tradeoffLabels[tradeoff.topic] || { left: "Left", right: "Right" };
-              const position = tradeoff.sliderValue <= 33 ? labels.left : tradeoff.sliderValue >= 67 ? labels.right : "Balanced";
+        <>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
+              Strategic Positions ({completedTradeoffs.length}/5 defined)
+            </p>
+            <div className="space-y-2">
+              {completedTradeoffs.slice(0, variant === "compact" ? 3 : undefined).map((tradeoff) => {
+                const labels = tradeoffLabels[tradeoff.topic] || { left: "Left", right: "Right" };
+                const position = tradeoff.sliderValue <= 33 ? labels.left : tradeoff.sliderValue >= 67 ? labels.right : "Balanced";
 
-              return (
-                <div key={tradeoff.id} className="bg-[var(--color-bg)] rounded p-2">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium capitalize">{tradeoff.topic.replace("-", " ")}</span>
-                    <span className="text-xs px-2 py-0.5 bg-[var(--color-accent)]/10 text-[var(--color-accent)] rounded">
-                      {position}
-                    </span>
+                return (
+                  <div key={tradeoff.id} className="bg-[var(--color-bg)] rounded p-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium capitalize">{tradeoff.topic.replace("-", " ")}</span>
+                      <span className="text-xs px-2 py-0.5 bg-[var(--color-accent)]/10 text-[var(--color-accent)] rounded">
+                        {position}
+                      </span>
+                    </div>
+                    {/* Slider visualization */}
+                    <div className="w-full h-1.5 bg-[var(--color-surface)] rounded-full relative">
+                      <div
+                        className="absolute top-0 h-1.5 w-2 bg-[var(--color-accent)] rounded-full"
+                        style={{ left: `calc(${tradeoff.sliderValue}% - 4px)` }}
+                      />
+                    </div>
                   </div>
-                  {/* Slider visualization */}
-                  <div className="w-full h-1.5 bg-[var(--color-surface)] rounded-full relative">
-                    <div
-                      className="absolute top-0 h-1.5 w-2 bg-[var(--color-accent)] rounded-full"
-                      style={{ left: `calc(${tradeoff.sliderValue}% - 4px)` }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-            {variant === "compact" && completedTradeoffs.length > 3 && (
-              <p className="text-xs text-[var(--color-text-muted)]">+{completedTradeoffs.length - 3} more positions</p>
-            )}
+                );
+              })}
+              {variant === "compact" && completedTradeoffs.length > 3 && (
+                <p className="text-xs text-[var(--color-text-muted)]">+{completedTradeoffs.length - 3} more positions</p>
+              )}
+            </div>
           </div>
-        </div>
+          {showAISummary && variant === "full" && (
+            <AISummaryCard type="exercise" id="tradeoff-navigator" data={{ tradeoffs: completedTradeoffs }} />
+          )}
+        </>
       );
     }
 
@@ -190,37 +208,42 @@ export function ExerciseDataSummary({ exerciseId, variant = "compact" }: Exercis
       if (frictionPoints.length === 0) return null;
 
       return (
-        <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
-            Friction Points Identified ({frictionPoints.length})
-          </p>
-          <div className="space-y-2">
-            {frictionPoints.slice(0, variant === "compact" ? 3 : undefined).map((fp) => (
-              <div key={fp.id} className="bg-[var(--color-bg)] rounded p-2">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 min-w-0">
-                    <span className="text-xs px-2 py-0.5 bg-[var(--color-accent-teal)]/10 text-[var(--color-accent-teal)] rounded mr-2">
-                      {fp.processArea}
-                    </span>
-                    <p className="text-sm text-[var(--color-text-body)] mt-1">{truncate(fp.description, 80)}</p>
+        <>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
+              Friction Points Identified ({frictionPoints.length})
+            </p>
+            <div className="space-y-2">
+              {frictionPoints.slice(0, variant === "compact" ? 3 : undefined).map((fp) => (
+                <div key={fp.id} className="bg-[var(--color-bg)] rounded p-2">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <span className="text-xs px-2 py-0.5 bg-[var(--color-accent-teal)]/10 text-[var(--color-accent-teal)] rounded mr-2">
+                        {fp.processArea}
+                      </span>
+                      <p className="text-sm text-[var(--color-text-body)] mt-1">{truncate(fp.description, 80)}</p>
+                    </div>
+                    {fp.priority && (
+                      <span className={`text-xs px-2 py-0.5 rounded ml-2 ${
+                        fp.priority === "high" ? "bg-[var(--color-accent-coral)]/10 text-[var(--color-accent-coral)]" :
+                        fp.priority === "medium" ? "bg-[var(--color-accent)]/10 text-[var(--color-accent)]" :
+                        "bg-[var(--color-surface)] text-[var(--color-text-muted)]"
+                      }`}>
+                        {fp.priority}
+                      </span>
+                    )}
                   </div>
-                  {fp.priority && (
-                    <span className={`text-xs px-2 py-0.5 rounded ml-2 ${
-                      fp.priority === "high" ? "bg-[var(--color-accent-coral)]/10 text-[var(--color-accent-coral)]" :
-                      fp.priority === "medium" ? "bg-[var(--color-accent)]/10 text-[var(--color-accent)]" :
-                      "bg-[var(--color-surface)] text-[var(--color-text-muted)]"
-                    }`}>
-                      {fp.priority}
-                    </span>
-                  )}
                 </div>
-              </div>
-            ))}
-            {variant === "compact" && frictionPoints.length > 3 && (
-              <p className="text-xs text-[var(--color-text-muted)]">+{frictionPoints.length - 3} more friction points</p>
-            )}
+              ))}
+              {variant === "compact" && frictionPoints.length > 3 && (
+                <p className="text-xs text-[var(--color-text-muted)]">+{frictionPoints.length - 3} more friction points</p>
+              )}
+            </div>
           </div>
-        </div>
+          {showAISummary && variant === "full" && (
+            <AISummaryCard type="exercise" id="friction-map" data={{ frictionPoints }} />
+          )}
+        </>
       );
     }
 
@@ -232,34 +255,39 @@ export function ExerciseDataSummary({ exerciseId, variant = "compact" }: Exercis
         .sort((a, b) => b.valueScore - a.valueScore);
 
       return (
-        <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
-            Opportunities Scored ({scoredOpportunities.length})
-          </p>
-          <div className="space-y-2">
-            {topOpportunities.slice(0, variant === "compact" ? 3 : undefined).map((opp) => (
-              <div key={opp.id} className="bg-[var(--color-bg)] rounded p-2">
-                <div className="flex items-start justify-between mb-1">
-                  <p className="text-sm font-medium">{truncate(opp.title, 50)}</p>
-                  <span className={`text-xs px-2 py-0.5 rounded ${
-                    opp.quadrant === "quick-win" ? "bg-[var(--color-accent-teal)]/10 text-[var(--color-accent-teal)]" :
-                    opp.quadrant === "strategic" ? "bg-[var(--color-accent)]/10 text-[var(--color-accent)]" :
-                    "bg-[var(--color-surface)] text-[var(--color-text-muted)]"
-                  }`}>
-                    {quadrantLabels[opp.quadrant]}
-                  </span>
+        <>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
+              Opportunities Scored ({scoredOpportunities.length})
+            </p>
+            <div className="space-y-2">
+              {topOpportunities.slice(0, variant === "compact" ? 3 : undefined).map((opp) => (
+                <div key={opp.id} className="bg-[var(--color-bg)] rounded p-2">
+                  <div className="flex items-start justify-between mb-1">
+                    <p className="text-sm font-medium">{truncate(opp.title, 50)}</p>
+                    <span className={`text-xs px-2 py-0.5 rounded ${
+                      opp.quadrant === "quick-win" ? "bg-[var(--color-accent-teal)]/10 text-[var(--color-accent-teal)]" :
+                      opp.quadrant === "strategic" ? "bg-[var(--color-accent)]/10 text-[var(--color-accent)]" :
+                      "bg-[var(--color-surface)] text-[var(--color-text-muted)]"
+                    }`}>
+                      {quadrantLabels[opp.quadrant]}
+                    </span>
+                  </div>
+                  <div className="flex gap-3 text-xs text-[var(--color-text-muted)]">
+                    <span>Value: <span className="text-[var(--color-text)]">{opp.valueScore}/5</span></span>
+                    <span>Complexity: <span className="text-[var(--color-text)]">{opp.complexityScore}/5</span></span>
+                  </div>
                 </div>
-                <div className="flex gap-3 text-xs text-[var(--color-text-muted)]">
-                  <span>Value: <span className="text-[var(--color-text)]">{opp.valueScore}/5</span></span>
-                  <span>Complexity: <span className="text-[var(--color-text)]">{opp.complexityScore}/5</span></span>
-                </div>
-              </div>
-            ))}
-            {variant === "compact" && scoredOpportunities.length > 3 && (
-              <p className="text-xs text-[var(--color-text-muted)]">+{scoredOpportunities.length - 3} more opportunities</p>
-            )}
+              ))}
+              {variant === "compact" && scoredOpportunities.length > 3 && (
+                <p className="text-xs text-[var(--color-text-muted)]">+{scoredOpportunities.length - 3} more opportunities</p>
+              )}
+            </div>
           </div>
-        </div>
+          {showAISummary && variant === "full" && (
+            <AISummaryCard type="exercise" id="opportunity-scoring" data={{ opportunities: scoredOpportunities }} />
+          )}
+        </>
       );
     }
 
@@ -273,23 +301,28 @@ export function ExerciseDataSummary({ exerciseId, variant = "compact" }: Exercis
       }, {} as Record<string, number>);
 
       return (
-        <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
-            Priority Distribution
-          </p>
-          <div className="grid grid-cols-2 gap-2">
-            {Object.entries(quadrantLabels).map(([key, label]) => (
-              <div key={key} className={`bg-[var(--color-bg)] rounded p-2 text-center ${
-                key === "quick-win" ? "border border-[var(--color-accent-teal)]/30" :
-                key === "strategic" ? "border border-[var(--color-accent)]/30" :
-                ""
-              }`}>
-                <p className="text-lg font-bold text-[var(--color-text)]">{quadrantCounts[key] || 0}</p>
-                <p className="text-xs text-[var(--color-text-muted)]">{label}</p>
-              </div>
-            ))}
+        <>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
+              Priority Distribution
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {Object.entries(quadrantLabels).map(([key, label]) => (
+                <div key={key} className={`bg-[var(--color-bg)] rounded p-2 text-center ${
+                  key === "quick-win" ? "border border-[var(--color-accent-teal)]/30" :
+                  key === "strategic" ? "border border-[var(--color-accent)]/30" :
+                  ""
+                }`}>
+                  <p className="text-lg font-bold text-[var(--color-text)]">{quadrantCounts[key] || 0}</p>
+                  <p className="text-xs text-[var(--color-text-muted)]">{label}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+          {showAISummary && variant === "full" && (
+            <AISummaryCard type="exercise" id="priority-matrix" data={{ quadrantCounts, opportunities: scoredOpportunities }} />
+          )}
+        </>
       );
     }
 
@@ -300,24 +333,29 @@ export function ExerciseDataSummary({ exerciseId, variant = "compact" }: Exercis
       if (topVoted.length === 0 || topVoted.every(o => o.voteCount === 0)) return null;
 
       return (
-        <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
-            {selectedPilots.length > 0 ? `Selected for Pilot (${selectedPilots.length})` : "Top Voted Options"}
-          </p>
-          <div className="space-y-2">
-            {(selectedPilots.length > 0 ? selectedPilots : topVoted.slice(0, 3)).map((opp) => (
-              <div key={opp.id} className="bg-[var(--color-bg)] rounded p-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium">{truncate(opp.title, 45)}</p>
-                  <span className="flex items-center gap-1 text-sm">
-                    <span className="text-[var(--color-accent)]">{opp.voteCount}</span>
-                    <span className="text-[var(--color-text-muted)]">votes</span>
-                  </span>
+        <>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
+              {selectedPilots.length > 0 ? `Selected for Pilot (${selectedPilots.length})` : "Top Voted Options"}
+            </p>
+            <div className="space-y-2">
+              {(selectedPilots.length > 0 ? selectedPilots : topVoted.slice(0, 3)).map((opp) => (
+                <div key={opp.id} className="bg-[var(--color-bg)] rounded p-2">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium">{truncate(opp.title, 45)}</p>
+                    <span className="flex items-center gap-1 text-sm">
+                      <span className="text-[var(--color-accent)]">{opp.voteCount}</span>
+                      <span className="text-[var(--color-text-muted)]">votes</span>
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+          {showAISummary && variant === "full" && (
+            <AISummaryCard type="exercise" id="dot-voting" data={{ selectedPilots, votingResults: topVoted }} />
+          )}
+        </>
       );
     }
 
@@ -339,38 +377,43 @@ export function ExerciseDataSummary({ exerciseId, variant = "compact" }: Exercis
       const spec = mvpSpecs[0]; // Usually there's one MVP spec
 
       return (
-        <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
-            MVP Specification
-          </p>
-          <div className="bg-[var(--color-bg)] rounded p-3 space-y-2">
-            <div>
-              <p className="text-xs text-[var(--color-text-muted)]">Scope</p>
-              <p className="text-sm">{truncate(spec.scope, 100)}</p>
-            </div>
-            {spec.toolsToUse.length > 0 && (
+        <>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
+              MVP Specification
+            </p>
+            <div className="bg-[var(--color-bg)] rounded p-3 space-y-2">
               <div>
-                <p className="text-xs text-[var(--color-text-muted)]">Tools</p>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {spec.toolsToUse.slice(0, 3).map((tool, i) => (
-                    <span key={i} className="px-2 py-0.5 text-xs bg-[var(--color-accent)]/10 text-[var(--color-accent)] rounded">
-                      {tool}
-                    </span>
-                  ))}
-                  {spec.toolsToUse.length > 3 && (
-                    <span className="text-xs text-[var(--color-text-muted)]">+{spec.toolsToUse.length - 3} more</span>
-                  )}
+                <p className="text-xs text-[var(--color-text-muted)]">Scope</p>
+                <p className="text-sm">{truncate(spec.scope, 100)}</p>
+              </div>
+              {spec.toolsToUse.length > 0 && (
+                <div>
+                  <p className="text-xs text-[var(--color-text-muted)]">Tools</p>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {spec.toolsToUse.slice(0, 3).map((tool, i) => (
+                      <span key={i} className="px-2 py-0.5 text-xs bg-[var(--color-accent)]/10 text-[var(--color-accent)] rounded">
+                        {tool}
+                      </span>
+                    ))}
+                    {spec.toolsToUse.length > 3 && (
+                      <span className="text-xs text-[var(--color-text-muted)]">+{spec.toolsToUse.length - 3} more</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-            {spec.humanCheckpoints.length > 0 && (
-              <div>
-                <p className="text-xs text-[var(--color-text-muted)]">Human Checkpoints</p>
-                <p className="text-sm">{truncate(spec.humanCheckpoints[0], 60)}</p>
-              </div>
-            )}
+              )}
+              {spec.humanCheckpoints.length > 0 && (
+                <div>
+                  <p className="text-xs text-[var(--color-text-muted)]">Human Checkpoints</p>
+                  <p className="text-sm">{truncate(spec.humanCheckpoints[0], 60)}</p>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+          {showAISummary && variant === "full" && (
+            <AISummaryCard type="exercise" id="mvp-spec" data={{ spec }} />
+          )}
+        </>
       );
     }
 
@@ -380,25 +423,30 @@ export function ExerciseDataSummary({ exerciseId, variant = "compact" }: Exercis
       const plan = pilotPlans[0];
 
       return (
-        <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
-            Pilot Plan
-          </p>
-          <div className="bg-[var(--color-bg)] rounded p-3 space-y-2">
-            <div className="flex justify-between">
-              <span className="text-xs text-[var(--color-text-muted)]">Duration</span>
-              <span className="text-sm font-medium">{plan.duration}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-xs text-[var(--color-text-muted)]">Test Users</span>
-              <span className="text-sm">{plan.testUsers.length}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-xs text-[var(--color-text-muted)]">Metrics</span>
-              <span className="text-sm">{plan.metricsToTrack.length}</span>
+        <>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
+              Pilot Plan
+            </p>
+            <div className="bg-[var(--color-bg)] rounded p-3 space-y-2">
+              <div className="flex justify-between">
+                <span className="text-xs text-[var(--color-text-muted)]">Duration</span>
+                <span className="text-sm font-medium">{plan.duration}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xs text-[var(--color-text-muted)]">Test Users</span>
+                <span className="text-sm">{plan.testUsers.length}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xs text-[var(--color-text-muted)]">Metrics</span>
+                <span className="text-sm">{plan.metricsToTrack.length}</span>
+              </div>
             </div>
           </div>
-        </div>
+          {showAISummary && variant === "full" && (
+            <AISummaryCard type="exercise" id="pilot-plan" data={{ plan }} />
+          )}
+        </>
       );
     }
 
@@ -412,21 +460,26 @@ export function ExerciseDataSummary({ exerciseId, variant = "compact" }: Exercis
       }, {} as Record<string, number>);
 
       return (
-        <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
-            90-Day Roadmap ({roadmapMilestones.length} milestones)
-          </p>
-          <div className="flex gap-2">
-            {["build", "pilot", "refine", "scale"].map((phase) => (
-              phaseGroups[phase] ? (
-                <div key={phase} className="flex-1 bg-[var(--color-bg)] rounded p-2 text-center">
-                  <p className="text-lg font-bold">{phaseGroups[phase]}</p>
-                  <p className="text-xs text-[var(--color-text-muted)] capitalize">{phase}</p>
-                </div>
-              ) : null
-            ))}
+        <>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-2">
+              90-Day Roadmap ({roadmapMilestones.length} milestones)
+            </p>
+            <div className="flex gap-2">
+              {["build", "pilot", "refine", "scale"].map((phase) => (
+                phaseGroups[phase] ? (
+                  <div key={phase} className="flex-1 bg-[var(--color-bg)] rounded p-2 text-center">
+                    <p className="text-lg font-bold">{phaseGroups[phase]}</p>
+                    <p className="text-xs text-[var(--color-text-muted)] capitalize">{phase}</p>
+                  </div>
+                ) : null
+              ))}
+            </div>
           </div>
-        </div>
+          {showAISummary && variant === "full" && (
+            <AISummaryCard type="exercise" id="roadmap-builder" data={{ milestones: roadmapMilestones, phaseGroups }} />
+          )}
+        </>
       );
     }
 

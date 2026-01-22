@@ -5,16 +5,38 @@
 This document catalogs all identified issues in the AgentMapper application, organized by severity. Each issue includes root cause analysis, user impact, recommended solutions, best practice citations, and testing strategies.
 
 **Issue Breakdown:**
-- **Critical:** 4 issues ✅ **FIXED (2026-01-22)** + 1 NEW 🚨 **BLOCKER** (Session 3 missing pages)
-- **High:** 14 issues (navigation, validation, missing features)
+- **Critical:** 4 issues ✅ **FIXED (2026-01-22)**
+- **High:** 14 issues → 8 remaining (6 fixed including progress bar, activity dashboards, last saved)
 - **Major:** 21 issues (UX, form behavior, accessibility)
 - **Minor:** 13 issues (polish, responsiveness)
-- **Enhancements:** 3 user requests (export, timestamps, simplification)
+- **Enhancements:** 3 user requests → 1 remaining (2 completed: timestamps, activity dashboards)
 - **Total:** 53 issues identified (39 original + 14 from QA testing)
 
-**Estimated Fix Time:** 4-6 weeks (assuming full-time development)
-**Status:** Week 1 Critical Data Fixes Complete | Week 2 Must Address Session 3 Blocker
-**Last Updated:** January 22, 2026 (after CEO Testing Agent QA report)
+**Estimated Fix Time:** 2-3 weeks remaining
+**Status:** Week 2 Priority 1 COMPLETE | Week 2 Priority 2 In Progress
+**Last Updated:** January 22, 2026 (after Activity Dashboards & AI Summaries implementation)
+
+### Week 2 Completed Features (Jan 22, 2026)
+
+1. ✅ **Activity Dashboards** - Exercise cards now show user progress inline
+   - Each exercise card displays actual data (participants, principles, friction points, etc.)
+   - Progress indicators on main workshop page exercise cards
+   - Conditional rendering: show description when empty, show data when populated
+
+2. ✅ **AI-Powered Summaries** - Claude Haiku integration for intelligent insights
+   - New API route: `/api/ai-summary`
+   - AISummaryCard component with loading states and caching
+   - Exercise-level, session-level, and workshop-level summaries
+   - 24-hour cache with data hash invalidation
+   - Graceful fallback when API key not configured
+
+3. ✅ **Progress Bar Fixed** - Now calculates from actual exercise completion
+   - Exercise completion logic for all 17 exercises
+   - Shows "X/17 exercises" count in sidebar
+
+4. ✅ **Last Saved Timestamp** - Displays "Xm ago" in sidebar
+   - Restores user confidence in data persistence
+   - Updates on every state change
 
 **Key Findings:**
 - The application has a solid architectural foundation with good TypeScript practices

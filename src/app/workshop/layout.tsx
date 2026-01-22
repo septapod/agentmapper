@@ -4,11 +4,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Home, ChevronRight, Printer } from "lucide-react";
-import { useOrganization } from "@/store/workshop";
+import { Home, ChevronRight, Printer, Clock } from "lucide-react";
+import { useOrganization, useIcebreakerResponses, useCognitiveBiases, useWorkingPrinciples, useTradeoffs, useFrictionPoints, useScoredOpportunities, useMVPSpecs, usePilotPlans, useRoadmapMilestones, useScalingChecklist, useTrainingPlan, useLessonsLearned, useNextOpportunities, useWorkshopStore } from "@/store/workshop";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { CloudSyncPanel } from "@/components/workshop/CloudSyncPanel";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 const sessions = [
   {
@@ -61,6 +61,22 @@ const sessions = [
   },
 ];
 
+// Helper to format time ago
+function formatTimeAgo(dateString: string | null): string {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return "just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  return `${diffDays}d ago`;
+}
+
 export default function WorkshopLayout({
   children,
 }: {
@@ -70,6 +86,22 @@ export default function WorkshopLayout({
   const pathname = usePathname();
   const organization = useOrganization();
 
+  // Get all data for progress calculation
+  const icebreakerResponses = useIcebreakerResponses();
+  const biases = useCognitiveBiases();
+  const workingPrinciples = useWorkingPrinciples();
+  const tradeoffs = useTradeoffs();
+  const frictionPoints = useFrictionPoints();
+  const scoredOpportunities = useScoredOpportunities();
+  const mvpSpecs = useMVPSpecs();
+  const pilotPlans = usePilotPlans();
+  const roadmapMilestones = useRoadmapMilestones();
+  const scalingChecklist = useScalingChecklist();
+  const trainingPlan = useTrainingPlan();
+  const lessonsLearned = useLessonsLearned();
+  const nextOpportunities = useNextOpportunities();
+  const lastSaved = useWorkshopStore((state) => state.lastSaved);
+
   // Redirect if no organization
   useEffect(() => {
     if (!organization) {
@@ -77,14 +109,44 @@ export default function WorkshopLayout({
     }
   }, [organization, router]);
 
+  // Calculate overall progress based on exercise completion criteria
+  const { completedCount, totalCount, progressPercent } = useMemo(() => {
+    const exerciseStatus: Record<string, boolean> = {
+      // Session 1
+      "ai-icebreakers": icebreakerResponses.length > 0 && biases.filter(b => b.checked).length >= 3,
+      "working-principles": workingPrinciples.length === 4 && workingPrinciples.every(p => p.dos.length >= 2 && p.donts.length >= 2),
+      "tradeoff-navigator": tradeoffs.every(t => t.rationale.trim().length >= 20),
+      // Session 2
+      "friction-map": frictionPoints.length > 0,
+      "opportunity-scoring": scoredOpportunities.length > 0,
+      "priority-matrix": scoredOpportunities.length > 0, // Same data as opportunity-scoring
+      "dot-voting": scoredOpportunities.some(o => o.selectedForPilot),
+      // Session 3 (stub exercises count as not completed)
+      "pattern-matching": false,
+      "future-state-workflow": false,
+      "risk-governance": false,
+      "mvp-charter": mvpSpecs.length > 0,
+      // Session 4
+      "roadmap-builder": roadmapMilestones.length > 0,
+      "raci-matrix": false, // Not implemented
+      "governance": false, // Not implemented
+      // Session 5
+      "scaling-checklist": scalingChecklist.length > 0,
+      "training-plan": trainingPlan.length > 0,
+      "lessons-learned": lessonsLearned.length > 0,
+      "next-opportunities": nextOpportunities.length > 0,
+    };
+
+    const completed = Object.values(exerciseStatus).filter(Boolean).length;
+    const total = Object.keys(exerciseStatus).length;
+    const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    return { completedCount: completed, totalCount: total, progressPercent: percent };
+  }, [icebreakerResponses, biases, workingPrinciples, tradeoffs, frictionPoints, scoredOpportunities, mvpSpecs, roadmapMilestones, scalingChecklist, trainingPlan, lessonsLearned, nextOpportunities]);
+
   if (!organization) {
     return null;
   }
-
-  // Calculate overall progress
-  const totalExercises = sessions.reduce((acc, s) => acc + s.exercises.length, 0);
-  const completedExercises = 0; // TODO: Calculate from state
-  const progressPercent = (completedExercises / totalExercises) * 100;
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)] flex">
@@ -101,6 +163,17 @@ export default function WorkshopLayout({
           </h2>
           <div className="mt-2">
             <ProgressBar value={progressPercent} size="sm" showLabel />
+            <div className="flex items-center justify-between mt-1">
+              <span className="text-xs text-[var(--color-text-muted)]">
+                {completedCount}/{totalCount} exercises
+              </span>
+              {lastSaved && (
+                <span className="flex items-center gap-1 text-xs text-[var(--color-text-muted)]">
+                  <Clock className="w-3 h-3" />
+                  {formatTimeAgo(lastSaved)}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
