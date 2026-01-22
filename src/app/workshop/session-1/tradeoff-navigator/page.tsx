@@ -76,11 +76,11 @@ export default function TradeoffNavigatorPage() {
         className="mb-8"
       >
         <Link
-          href="/workshop/onboarding"
+          href="/workshop/session-1"
           className="inline-flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Onboarding
+          Back to Session 1
         </Link>
 
         <div className="flex items-center gap-4 mb-4">
@@ -89,7 +89,7 @@ export default function TradeoffNavigatorPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold">Tradeoff Navigator</h1>
-            <p className="text-[var(--color-text-muted)]">Exercise 3 of 3 · Onboarding</p>
+            <p className="text-[var(--color-text-muted)]">Exercise 3 of 3 · Session 1</p>
           </div>
         </div>
 
@@ -177,17 +177,17 @@ export default function TradeoffNavigatorPage() {
         animate={{ opacity: 1, y: 0 }}
         className="flex justify-between items-center"
       >
-        <Link href="/workshop/onboarding/working-principles">
+        <Link href="/workshop/session-1/working-principles">
           <Button variant="ghost" leftIcon={<ArrowLeft className="w-4 h-4" />}>
             Back to Working Principles
           </Button>
         </Link>
-        <Link href={isComplete ? "/workshop/onboarding" : "#"}>
+        <Link href={isComplete ? "/workshop/session-1" : "#"}>
           <Button
             variant="primary"
             disabled={!isComplete}
           >
-            Back to Onboarding Overview
+            Back to Session 1 Overview
           </Button>
         </Link>
       </motion.div>

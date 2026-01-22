@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, ArrowLeft, Map, BarChart3, Grid3X3, Vote, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StepProgress } from "@/components/ui/ProgressBar";
-import { useFrictionPoints, useScoredOpportunities, useOnboardingComplete } from "@/store/workshop";
+import { useFrictionPoints, useScoredOpportunities } from "@/store/workshop";
 
 const exercises = [
   {
@@ -74,16 +72,8 @@ const exercises = [
 ];
 
 export default function Session2Page() {
-  const router = useRouter();
-  const onboardingComplete = useOnboardingComplete();
   const frictionPoints = useFrictionPoints();
   const scoredOpportunities = useScoredOpportunities();
-
-  useEffect(() => {
-    if (!onboardingComplete) {
-      router.push('/workshop/onboarding');
-    }
-  }, [onboardingComplete, router]);
 
   const getExerciseStatus = (id: string): "pending" | "in-progress" | "completed" => {
     switch (id) {

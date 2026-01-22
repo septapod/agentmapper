@@ -40,22 +40,20 @@ interface WorkshopActions {
   // Session navigation
   setCurrentSession: (session: number) => void;
 
-  // Onboarding (Session 0) - AI Icebreakers
+  // Session 1 - AI Icebreakers
   addIcebreakerResponse: (response: Omit<AIIcebreakerResponse, "id" | "createdAt">) => void;
   deleteIcebreakerResponse: (id: string) => void;
   toggleCognitiveBias: (biasId: string) => void;
 
-  // Onboarding - AI Working Principles
+  // Session 1 - AI Working Principles
   addWorkingPrinciple: (principle: Omit<AIWorkingPrinciple, "id" | "createdAt">) => void;
   updateWorkingPrinciple: (id: string, updates: Partial<AIWorkingPrinciple>) => void;
 
-  // Onboarding - AI Tradeoff Navigator
+  // Session 1 - AI Tradeoff Navigator
   updateTradeoff: (topic: string, value: number, rationale: string) => void;
 
-  // Onboarding - Completion
-  markOnboardingComplete: () => void;
-
-  // Session 1 - Future Headlines
+  // Session 1 - Future Headlines (removed)
+  // Session 2 - Friction Points
   addFutureHeadline: (headline: Omit<FutureHeadline, "id" | "createdAt">) => void;
   updateFutureHeadline: (id: string, updates: Partial<FutureHeadline>) => void;
   deleteFutureHeadline: (id: string) => void;
@@ -142,9 +140,9 @@ const initialCloudState: CloudState = {
 
 const initialState: WorkshopState & CloudState = {
   organization: null,
-  currentSession: 0, // Start at onboarding
+  currentSession: 1, // Start at Session 1
 
-  // Onboarding (Session 0)
+  // Session 1
   aiIcebreakerResponses: [],
   cognitiveBiases: [
     { id: "confirmation", name: "Confirmation Bias", description: "Seeking info that confirms existing beliefs", checked: false },
@@ -164,12 +162,6 @@ const initialState: WorkshopState & CloudState = {
     { id: "external-comms", topic: "external-comms", sliderValue: 50, rationale: "", createdAt: "" },
     { id: "internal-comms", topic: "internal-comms", sliderValue: 50, rationale: "", createdAt: "" },
   ],
-  onboardingComplete: false,
-
-  // Session 1
-  futureHeadlines: [],
-  opportunities: [],
-  designPrinciples: [],
 
   // Session 2
   frictionPoints: [],
@@ -230,7 +222,7 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
           return { currentSession: session };
         }),
 
-      // Onboarding - AI Icebreakers
+      // Session 1 - AI Icebreakers
       addIcebreakerResponse: (response) =>
         set((state) => ({
           aiIcebreakerResponses: [
@@ -254,7 +246,7 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
           isDirty: true,
         })),
 
-      // Onboarding - AI Working Principles
+      // Session 1 - AI Working Principles
       addWorkingPrinciple: (principle) =>
         set((state) => ({
           aiWorkingPrinciples: [
@@ -272,7 +264,7 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
           isDirty: true,
         })),
 
-      // Onboarding - AI Tradeoff Navigator
+      // Session 1 - AI Tradeoff Navigator
       updateTradeoff: (topic, value, rationale) =>
         set((state) => ({
           aiTradeoffs: state.aiTradeoffs.map((t) =>
@@ -283,18 +275,7 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
           isDirty: true,
         })),
 
-      // Onboarding - Completion
-      markOnboardingComplete: () =>
-        set((state) => ({
-          onboardingComplete: true,
-          currentSession: 1,
-          organization: state.organization
-            ? { ...state.organization, currentSession: 1, updatedAt: new Date().toISOString() }
-            : null,
-          isDirty: true,
-        })),
-
-      // Session 1 - Future Headlines
+      // Session 1 - Future Headlines (removed - no longer in use)
       addFutureHeadline: (headline) =>
         set((state) => ({
           futureHeadlines: [
@@ -821,17 +802,13 @@ export const useWorkshopStore = create<WorkshopState & CloudState & WorkshopActi
 export const useOrganization = () => useWorkshopStore((state) => state.organization);
 export const useCurrentSession = () => useWorkshopStore((state) => state.currentSession);
 
-// Onboarding selectors
+// Session 1 selectors
 export const useIcebreakerResponses = () => useWorkshopStore((state) => state.aiIcebreakerResponses);
 export const useCognitiveBiases = () => useWorkshopStore((state) => state.cognitiveBiases);
 export const useWorkingPrinciples = () => useWorkshopStore((state) => state.aiWorkingPrinciples);
 export const useTradeoffs = () => useWorkshopStore((state) => state.aiTradeoffs);
-export const useOnboardingComplete = () => useWorkshopStore((state) => state.onboardingComplete);
 
-// Session 1 selectors
-export const useFutureHeadlines = () => useWorkshopStore((state) => state.futureHeadlines);
-export const useOpportunities = () => useWorkshopStore((state) => state.opportunities);
-export const useDesignPrinciples = () => useWorkshopStore((state) => state.designPrinciples);
+// Session 2 selectors
 export const useFrictionPoints = () => useWorkshopStore((state) => state.frictionPoints);
 export const useScoredOpportunities = () => useWorkshopStore((state) => state.scoredOpportunities);
 export const useMVPSpecs = () => useWorkshopStore((state) => state.mvpSpecs);

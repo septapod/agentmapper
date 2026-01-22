@@ -5,31 +5,19 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, Circle, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { useOrganization, useCurrentSession, useOnboardingComplete } from "@/store/workshop";
+import { useOrganization, useCurrentSession } from "@/store/workshop";
 
 const sessions = [
   {
-    number: 0,
+    number: 1,
     title: "AI Strategy Foundation",
     duration: "2-4 hours",
     description:
-      "Establish your organization's AI governance approach through strategic exercises. Collect team perspectives, define ethical principles, and make key strategic tradeoffs.",
+      "Build your organization's AI governance foundation. Understand team perspectives, define core principles, and make strategic positioning decisions that will guide all future AI implementation work.",
     exercises: [
       { id: "ai-icebreakers", title: "AI Icebreakers", description: "Team alignment on AI timeline and cognitive biases" },
       { id: "working-principles", title: "Working Principles", description: "Define ethical principles and governance do's/don'ts" },
       { id: "tradeoff-navigator", title: "Tradeoff Navigator", description: "Strategic decisions on control, priority, and communications" },
-    ],
-  },
-  {
-    number: 1,
-    title: "Orientation & Shared Understanding",
-    duration: "2-3 hours",
-    description:
-      "Build a common understanding of Agentic AI, define your aspirations with Future Headlines, brainstorm opportunities, and establish design principles and guardrails.",
-    exercises: [
-      { id: "future-headlines", title: "Future Headlines", description: "Imagine 2-3 year future headlines about your AI journey" },
-      { id: "opportunity-brainstorm", title: "Opportunity Brainstorm", description: "Capture where AI could help across your organization" },
-      { id: "design-principles", title: "Design Principles", description: "Define hard boundaries and guiding principles" },
     ],
   },
   {
@@ -84,7 +72,6 @@ const sessions = [
 export default function WorkshopPage() {
   const organization = useOrganization();
   const currentSession = useCurrentSession();
-  const onboardingComplete = useOnboardingComplete();
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
@@ -109,13 +96,9 @@ export default function WorkshopPage() {
       {/* Sessions Grid */}
       <div className="space-y-8">
         {sessions.map((session, index) => {
-          const isCompleted = session.number === 0
-            ? onboardingComplete
-            : session.number < currentSession;
-          const isCurrent = session.number === 0
-            ? !onboardingComplete
-            : session.number === currentSession;
-          const isLocked = session.number > 0 && !onboardingComplete ? true : session.number > currentSession;
+          const isCompleted = session.number < currentSession;
+          const isCurrent = session.number === currentSession;
+          const isLocked = session.number > currentSession;
 
           return (
             <motion.div

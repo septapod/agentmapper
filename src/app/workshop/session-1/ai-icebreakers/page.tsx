@@ -65,11 +65,11 @@ export default function AIIcebreakersPage() {
         className="mb-8"
       >
         <Link
-          href="/workshop/onboarding"
+          href="/workshop/session-1"
           className="inline-flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Onboarding
+          Back to Session 1
         </Link>
 
         <div className="flex items-center gap-4 mb-4">
@@ -78,7 +78,7 @@ export default function AIIcebreakersPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold">AI Icebreakers</h1>
-            <p className="text-[var(--color-text-muted)]">Exercise 1 of 3 · Onboarding</p>
+            <p className="text-[var(--color-text-muted)]">Exercise 1 of 3 · Session 1</p>
           </div>
         </div>
 
@@ -260,13 +260,13 @@ export default function AIIcebreakersPage() {
         transition={{ delay: 0.4 }}
         className="flex justify-between items-center"
       >
-        <Link href="/workshop/onboarding">
+        <Link href="/workshop/session-1">
           <Button variant="ghost" leftIcon={<ArrowLeft className="w-4 h-4" />}>
-            Back to Onboarding
+            Back to Session 1
           </Button>
         </Link>
         {responses.length > 0 && biases.filter(b => b.checked).length >= 3 && (
-          <Link href="/workshop/onboarding/working-principles">
+          <Link href="/workshop/session-1/working-principles">
             <Button
               variant="primary"
               rightIcon={<ArrowRight className="w-4 h-4" />}

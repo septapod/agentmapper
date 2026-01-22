@@ -13,11 +13,11 @@ import { useEffect } from "react";
 const sessions = [
   {
     number: 1,
-    title: "Orientation",
+    title: "AI Strategy Foundation",
     exercises: [
-      { id: "future-headlines", title: "Future Headlines" },
-      { id: "opportunity-brainstorm", title: "Opportunity Brainstorm" },
-      { id: "design-principles", title: "Design Principles" },
+      { id: "ai-icebreakers", title: "AI Icebreakers" },
+      { id: "working-principles", title: "Working Principles" },
+      { id: "tradeoff-navigator", title: "Tradeoff Navigator" },
     ],
   },
   {

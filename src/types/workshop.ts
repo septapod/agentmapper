@@ -8,27 +8,36 @@ export interface Organization {
   completionPercent: number;
 }
 
-// Session 1 Types
-export interface FutureHeadline {
+// Session 1 Types - AI Strategy Foundation
+export interface AIIcebreakerResponse {
   id: string;
-  headline: string;
-  timeframe: "1-year" | "2-year" | "3-year";
-  category: "member" | "employee" | "business" | "risk";
+  participantName: string;
+  timelineMonths: number; // 6, 12, 18, 24, 36
+  optimismScore: number; // 1-5 scale
   createdAt: string;
 }
 
-export interface Opportunity {
+export interface CognitiveBias {
   id: string;
-  title: string;
+  name: string;
   description: string;
-  area: string;
+  checked: boolean;
+}
+
+export interface AIWorkingPrinciple {
+  id: string;
+  principleType: "human-centered" | "control-accountability" | "observability-explainability" | "improvement-responsiveness";
+  promptingAnswers: Record<string, string>;
+  dos: string[];
+  donts: string[];
   createdAt: string;
 }
 
-export interface DesignPrinciple {
+export interface AITradeoff {
   id: string;
-  principle: string;
-  isGuardrail: boolean;
+  topic: "control" | "priority" | "users" | "external-comms" | "internal-comms";
+  sliderValue: number; // 0-100
+  rationale: string;
   createdAt: string;
 }
 
@@ -91,39 +100,6 @@ export interface RoadmapMilestone {
   createdAt: string;
 }
 
-// Onboarding (Session 0) Types - AI Strategy Foundation
-export interface AIIcebreakerResponse {
-  id: string;
-  participantName: string;
-  timelineMonths: number; // 6, 12, 18, 24, 36
-  optimismScore: number; // 1-5 scale
-  createdAt: string;
-}
-
-export interface CognitiveBias {
-  id: string;
-  name: string;
-  description: string;
-  checked: boolean;
-}
-
-export interface AIWorkingPrinciple {
-  id: string;
-  principleType: "human-centered" | "control-accountability" | "observability-explainability" | "improvement-responsiveness";
-  promptingAnswers: Record<string, string>;
-  dos: string[];
-  donts: string[];
-  createdAt: string;
-}
-
-export interface AITradeoff {
-  id: string;
-  topic: "control" | "priority" | "users" | "external-comms" | "internal-comms";
-  sliderValue: number; // 0-100
-  rationale: string;
-  createdAt: string;
-}
-
 // Session 5 Types - Empower Teams
 export interface ScalingChecklistItem {
   id: string;
@@ -167,17 +143,11 @@ export interface WorkshopState {
   organization: Organization | null;
   currentSession: number;
 
-  // Onboarding (Session 0)
+  // Session 1
   aiIcebreakerResponses: AIIcebreakerResponse[];
   cognitiveBiases: CognitiveBias[];
   aiWorkingPrinciples: AIWorkingPrinciple[];
   aiTradeoffs: AITradeoff[];
-  onboardingComplete: boolean;
-
-  // Session 1
-  futureHeadlines: FutureHeadline[];
-  opportunities: Opportunity[];
-  designPrinciples: DesignPrinciple[];
 
   // Session 2
   frictionPoints: FrictionPoint[];

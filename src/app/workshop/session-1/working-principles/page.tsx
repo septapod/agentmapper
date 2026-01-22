@@ -163,7 +163,7 @@ export default function WorkingPrinciplesPage() {
         className="mb-8"
       >
         <Link
-          href="/workshop/onboarding"
+          href="/workshop/session-1"
           className="inline-flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -328,7 +328,7 @@ export default function WorkingPrinciplesPage() {
             Next Principle
           </Button>
         ) : (
-          <Link href={isComplete ? "/workshop/onboarding/tradeoff-navigator" : "#"}>
+          <Link href={isComplete ? "/workshop/session-1/tradeoff-navigator" : "#"}>
             <Button
               variant="primary"
               onClick={saveCurrent}

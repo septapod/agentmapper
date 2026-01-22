@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, ArrowLeft, Wrench, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StepProgress } from "@/components/ui/ProgressBar";
-import { useMVPSpecs, useOnboardingComplete } from "@/store/workshop";
+import { useMVPSpecs } from "@/store/workshop";
 
 const exercises = [
   {
@@ -29,15 +27,7 @@ const exercises = [
 ];
 
 export default function Session3Page() {
-  const router = useRouter();
-  const onboardingComplete = useOnboardingComplete();
   const mvpSpecs = useMVPSpecs();
-
-  useEffect(() => {
-    if (!onboardingComplete) {
-      router.push('/workshop/onboarding');
-    }
-  }, [onboardingComplete, router]);
 
   const getExerciseStatus = (id: string): "pending" | "in-progress" | "completed" => {
     switch (id) {
