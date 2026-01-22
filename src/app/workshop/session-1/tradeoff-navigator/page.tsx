@@ -256,17 +256,17 @@ export default function TradeoffNavigatorPage() {
             >
               <Card hoverable={false}>
                 <CardContent className="p-0">
-                  {/* Yellow Header Banner */}
-                  <div className="bg-[var(--color-accent)] p-4 rounded-t-xl">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-mono text-[var(--color-bg)] border border-[var(--color-bg)]/30 px-2 py-0.5 rounded">
+                  {/* Header */}
+                  <div className="p-6 border-b border-white/[0.1]">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs font-mono text-[var(--color-accent)] border border-[var(--color-accent)]/30 px-2 py-0.5 rounded">
                         TOPIC {topicNumber}
                       </span>
                       <div className="flex items-center gap-2">
                         {isCustom && (
                           <button
                             onClick={() => deleteCustomTradeoff(tradeoff.id)}
-                            className="p-1.5 rounded hover:bg-black/10 text-[var(--color-bg)]"
+                            className="p-1.5 rounded hover:bg-white/[0.05] text-[var(--color-text-muted)] hover:text-[var(--color-accent-coral)]"
                             title="Delete custom tradeoff"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -274,25 +274,34 @@ export default function TradeoffNavigatorPage() {
                         )}
                         <button
                           onClick={() => toggleTradeoffIgnored(tradeoff.id)}
-                          className="p-1.5 rounded hover:bg-black/10 text-[var(--color-bg)]"
+                          className="p-1.5 rounded hover:bg-white/[0.05] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
                           title={tradeoff.ignored ? "Include this tradeoff" : "Ignore this tradeoff"}
                         >
                           {tradeoff.ignored ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                         </button>
+                        {tradeoff.ignored && (
+                          <span className="text-xs bg-white/[0.05] px-2 py-1 rounded text-[var(--color-text-muted)]">
+                            Ignored
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <h2 className="text-xl font-bold text-[var(--color-bg)]">
-                      {title} - {question}
-                    </h2>
-                    {tradeoff.ignored && (
-                      <span className="inline-block mt-2 text-xs bg-black/20 px-2 py-1 rounded text-[var(--color-bg)]">
-                        Ignored
-                      </span>
-                    )}
+                    <h2 className="text-lg font-semibold text-[var(--color-text)]">{title}</h2>
+                    <p className="text-[var(--color-text-body)] mt-1">{question}</p>
                   </div>
 
                   {/* Content */}
                   <div className={`p-6 ${tradeoff.ignored ? "pointer-events-none" : ""}`}>
+                    {/* Labels above slider */}
+                    <div className="grid grid-cols-2 gap-8 mb-4">
+                      <div className="bg-white/[0.03] border border-white/[0.1] rounded-lg p-4">
+                        <p className="text-sm text-[var(--color-text)]">{leftLabel}</p>
+                      </div>
+                      <div className="bg-white/[0.03] border border-white/[0.1] rounded-lg p-4 text-right">
+                        <p className="text-sm text-[var(--color-text)]">{rightLabel}</p>
+                      </div>
+                    </div>
+
                     {/* Slider */}
                     <div className="mb-6">
                       <div className="relative py-4">
@@ -301,7 +310,7 @@ export default function TradeoffNavigatorPage() {
                           {[...Array(11)].map((_, i) => (
                             <div
                               key={i}
-                              className={`w-0.5 h-3 ${i === 0 || i === 10 ? "bg-[var(--color-text)]" : "bg-white/20"}`}
+                              className={`w-0.5 h-3 ${i === 0 || i === 10 ? "bg-[var(--color-text-muted)]" : "bg-white/[0.1]"}`}
                             />
                           ))}
                         </div>
@@ -314,19 +323,15 @@ export default function TradeoffNavigatorPage() {
                           disabled={tradeoff.ignored}
                           className="w-full h-2 bg-white/[0.1] rounded-lg appearance-none cursor-pointer slider relative z-10"
                           style={{
-                            background: `linear-gradient(to right, var(--color-accent) 0%, var(--color-accent) ${tradeoff.sliderValue}%, rgba(255,255,255,0.1) ${tradeoff.sliderValue}%, rgba(255,255,255,0.1) 100%)`,
+                            background: `linear-gradient(to right, var(--color-accent-teal) 0%, var(--color-accent-teal) ${tradeoff.sliderValue}%, rgba(255,255,255,0.08) ${tradeoff.sliderValue}%, rgba(255,255,255,0.08) 100%)`,
                           }}
                         />
                       </div>
-                    </div>
-
-                    {/* Labels */}
-                    <div className="grid grid-cols-2 gap-8 mb-6">
-                      <div className="border border-white/[0.1] rounded-lg p-4">
-                        <p className="text-sm font-medium">{leftLabel}</p>
-                      </div>
-                      <div className="border border-white/[0.1] rounded-lg p-4 text-right">
-                        <p className="text-sm font-medium">{rightLabel}</p>
+                      {/* Position indicator */}
+                      <div className="flex justify-between text-xs text-[var(--color-text-muted)] mt-1">
+                        <span>0</span>
+                        <span className="text-[var(--color-accent)]">{tradeoff.sliderValue}</span>
+                        <span>100</span>
                       </div>
                     </div>
 
@@ -434,34 +439,34 @@ export default function TradeoffNavigatorPage() {
       <style jsx>{`
         .slider::-webkit-slider-thumb {
           appearance: none;
-          width: 24px;
-          height: 24px;
+          width: 20px;
+          height: 20px;
           border-radius: 50%;
-          background: var(--color-accent);
+          background: var(--color-accent-teal);
           cursor: pointer;
-          border: 3px solid var(--color-surface);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          border: 2px solid var(--color-surface);
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
           position: relative;
           z-index: 10;
         }
 
         .slider::-moz-range-thumb {
-          width: 24px;
-          height: 24px;
+          width: 20px;
+          height: 20px;
           border-radius: 50%;
-          background: var(--color-accent);
+          background: var(--color-accent-teal);
           cursor: pointer;
-          border: 3px solid var(--color-surface);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+          border: 2px solid var(--color-surface);
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
         }
 
         .slider:disabled::-webkit-slider-thumb {
-          opacity: 0.5;
+          opacity: 0.4;
           cursor: not-allowed;
         }
 
         .slider:disabled::-moz-range-thumb {
-          opacity: 0.5;
+          opacity: 0.4;
           cursor: not-allowed;
         }
       `}</style>
