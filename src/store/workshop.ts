@@ -52,6 +52,9 @@ interface WorkshopActions {
 
   // Session 1 - AI Tradeoff Navigator
   updateTradeoff: (topic: string, value: number, rationale: string) => void;
+  toggleTradeoffIgnored: (id: string) => void;
+  addCustomTradeoff: (tradeoff: { title: string; question: string; leftLabel: string; rightLabel: string }) => void;
+  deleteCustomTradeoff: (id: string) => void;
 
   // Session 2 - Friction Points
   addFrictionPoint: (friction: Omit<FrictionPoint, "id" | "createdAt">) => void;
@@ -145,11 +148,11 @@ const initialState: WorkshopState & CloudState & VotingState = {
   ],
   aiWorkingPrinciples: [],
   aiTradeoffs: [
-    { id: "control", topic: "control", sliderValue: 50, rationale: "", createdAt: "" },
-    { id: "priority", topic: "priority", sliderValue: 50, rationale: "", createdAt: "" },
-    { id: "users", topic: "users", sliderValue: 50, rationale: "", createdAt: "" },
-    { id: "external-comms", topic: "external-comms", sliderValue: 50, rationale: "", createdAt: "" },
-    { id: "internal-comms", topic: "internal-comms", sliderValue: 50, rationale: "", createdAt: "" },
+    { id: "control", topic: "control", sliderValue: 50, rationale: "", ignored: false, createdAt: "" },
+    { id: "priority", topic: "priority", sliderValue: 50, rationale: "", ignored: false, createdAt: "" },
+    { id: "users", topic: "users", sliderValue: 50, rationale: "", ignored: false, createdAt: "" },
+    { id: "external-comms", topic: "external-comms", sliderValue: 50, rationale: "", ignored: false, createdAt: "" },
+    { id: "internal-comms", topic: "internal-comms", sliderValue: 50, rationale: "", ignored: false, createdAt: "" },
   ],
 
   // Session 2
@@ -264,6 +267,41 @@ export const useWorkshopStore = create<WorkshopState & CloudState & VotingState 
               ? { ...t, sliderValue: value, rationale, createdAt: new Date().toISOString() }
               : t
           ),
+          isDirty: true,
+        })),
+
+      toggleTradeoffIgnored: (id) =>
+        set((state) => ({
+          aiTradeoffs: state.aiTradeoffs.map((t) =>
+            t.id === id ? { ...t, ignored: !t.ignored } : t
+          ),
+          isDirty: true,
+        })),
+
+      addCustomTradeoff: (tradeoff) =>
+        set((state) => ({
+          aiTradeoffs: [
+            ...state.aiTradeoffs,
+            {
+              id: generateId(),
+              topic: `custom-${generateId()}`,
+              sliderValue: 50,
+              rationale: "",
+              ignored: false,
+              isCustom: true,
+              customTitle: tradeoff.title,
+              customQuestion: tradeoff.question,
+              customLeftLabel: tradeoff.leftLabel,
+              customRightLabel: tradeoff.rightLabel,
+              createdAt: new Date().toISOString(),
+            },
+          ],
+          isDirty: true,
+        })),
+
+      deleteCustomTradeoff: (id) =>
+        set((state) => ({
+          aiTradeoffs: state.aiTradeoffs.filter((t) => t.id !== id || !t.isCustom),
           isDirty: true,
         })),
 

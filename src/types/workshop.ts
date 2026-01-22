@@ -35,9 +35,15 @@ export interface AIWorkingPrinciple {
 
 export interface AITradeoff {
   id: string;
-  topic: "control" | "priority" | "users" | "external-comms" | "internal-comms";
+  topic: "control" | "priority" | "users" | "external-comms" | "internal-comms" | string; // Allow custom topics
   sliderValue: number; // 0-100
   rationale: string;
+  ignored: boolean; // Allow users to skip tradeoffs
+  isCustom?: boolean; // Flag for user-created tradeoffs
+  customTitle?: string; // Title for custom tradeoffs
+  customQuestion?: string; // Question for custom tradeoffs
+  customLeftLabel?: string; // Left label for custom tradeoffs
+  customRightLabel?: string; // Right label for custom tradeoffs
   createdAt: string;
 }
 
