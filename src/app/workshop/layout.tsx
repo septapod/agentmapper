@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Home, ChevronRight, Printer, Clock } from "lucide-react";
-import { useOrganization, useIcebreakerResponses, useCognitiveBiases, useWorkingPrinciples, useTradeoffs, useFrictionPoints, useScoredOpportunities, useMVPSpecs, usePilotPlans, useRoadmapMilestones, useScalingChecklist, useTrainingPlan, useLessonsLearned, useNextOpportunities, useWorkshopStore } from "@/store/workshop";
+import { useOrganization, useIcebreakerResponses, useCognitiveBiases, useWorkingPrinciples, useTradeoffs, useFrictionPoints, useScoredOpportunities, usePilotDesigns, useMVPSpecs, usePilotPlans, useRoadmapMilestones, useScalingChecklist, useTrainingPlan, useLessonsLearned, useNextOpportunities, useWorkshopStore } from "@/store/workshop";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { CloudSyncPanel } from "@/components/workshop/CloudSyncPanel";
 import { useEffect, useMemo } from "react";
@@ -32,12 +32,10 @@ const sessions = [
   },
   {
     number: 3,
-    title: "Organize the Work",
+    title: "Design the Pilot",
     exercises: [
-      { id: "pattern-matching", title: "Pattern Matching" },
-      { id: "future-state-workflow", title: "Workflow Design" },
-      { id: "risk-governance", title: "Risk Assessment" },
-      { id: "mvp-charter", title: "MVP Charter" },
+      { id: "pilot-design", title: "Pilot Design" },
+      { id: "mvp-spec", title: "MVP Specification" },
     ],
   },
   {
@@ -93,6 +91,7 @@ export default function WorkshopLayout({
   const tradeoffs = useTradeoffs();
   const frictionPoints = useFrictionPoints();
   const scoredOpportunities = useScoredOpportunities();
+  const pilotDesigns = usePilotDesigns();
   const mvpSpecs = useMVPSpecs();
   const pilotPlans = usePilotPlans();
   const roadmapMilestones = useRoadmapMilestones();
@@ -122,10 +121,8 @@ export default function WorkshopLayout({
       "priority-matrix": scoredOpportunities.length > 0,
       "dot-voting": scoredOpportunities.some(o => o.selectedForPilot),
       // Session 3
-      "pattern-matching": false, // Not implemented
-      "future-state-workflow": false, // Not implemented
-      "risk-governance": false, // Not implemented
-      "mvp-charter": mvpSpecs.length > 0,
+      "pilot-design": pilotDesigns.length > 0,
+      "mvp-spec": mvpSpecs.length > 0,
       // Session 4
       "roadmap-builder": roadmapMilestones.length > 0,
       "raci-matrix": false, // Not implemented
@@ -142,7 +139,7 @@ export default function WorkshopLayout({
     const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
 
     return { completedCount: completed, totalCount: total, progressPercent: percent };
-  }, [icebreakerResponses, workingPrinciples, tradeoffs, frictionPoints, scoredOpportunities, mvpSpecs, roadmapMilestones, scalingChecklist, trainingPlan, lessonsLearned, nextOpportunities]);
+  }, [icebreakerResponses, workingPrinciples, tradeoffs, frictionPoints, scoredOpportunities, pilotDesigns, mvpSpecs, roadmapMilestones, scalingChecklist, trainingPlan, lessonsLearned, nextOpportunities]);
 
   if (!organization) {
     return null;
