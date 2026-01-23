@@ -60,16 +60,12 @@ export default function TrainingPlanPage() {
   };
 
   const handleSubmit = () => {
-    if (!role.trim()) return;
-
     const filteredNeeds = trainingNeeds.filter((n) => n.trim());
     const filteredResources = resources.filter((r) => r.trim());
 
-    if (filteredNeeds.length === 0) return;
-
     addTrainingPlanEntry({
-      role: role.trim(),
-      trainingNeeds: filteredNeeds,
+      role: role.trim() || "General",
+      trainingNeeds: filteredNeeds.length > 0 ? filteredNeeds : ["To be defined"],
       resources: filteredResources,
       champion: champion.trim(),
       targetDate: targetDate.trim(),
@@ -83,7 +79,8 @@ export default function TrainingPlanPage() {
     setTargetDate("");
   };
 
-  const canSubmit = role.trim() && trainingNeeds.some((n) => n.trim());
+  // No gates - all fields are optional
+  const canSubmit = true;
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
@@ -337,13 +334,11 @@ export default function TrainingPlanPage() {
             Back to Scaling Checklist
           </Button>
         </Link>
-        {trainingPlan.length > 0 && (
-          <Link href="/workshop/session-5/lessons-learned">
-            <Button variant="primary" rightIcon={<ArrowRight className="w-4 h-4" />}>
-              Continue to Lessons Learned
-            </Button>
-          </Link>
-        )}
+        <Link href="/workshop/session-5/lessons-learned">
+          <Button variant="primary" rightIcon={<ArrowRight className="w-4 h-4" />}>
+            Continue to Lessons Learned
+          </Button>
+        </Link>
       </motion.div>
     </div>
   );

@@ -69,12 +69,10 @@ export default function PilotPlanPage() {
     const filteredMetrics = metricsToTrack.filter((m) => m.trim());
     const filteredCriteria = stopCriteria.filter((c) => c.trim());
 
-    if (filteredUsers.length === 0 || filteredMetrics.length === 0) return;
-
     addPilotPlan({
       mvpSpecId: selectedMVPId,
-      testUsers: filteredUsers,
-      metricsToTrack: filteredMetrics,
+      testUsers: filteredUsers.length > 0 ? filteredUsers : ["To be identified"],
+      metricsToTrack: filteredMetrics.length > 0 ? filteredMetrics : ["To be defined"],
       duration: duration.trim() || "4 weeks",
       stopCriteria: filteredCriteria,
     });
@@ -87,10 +85,8 @@ export default function PilotPlanPage() {
     setStopCriteria([""]);
   };
 
-  const canSubmit =
-    selectedMVPId &&
-    testUsers.some((u) => u.trim()) &&
-    metricsToTrack.some((m) => m.trim());
+  // Only require MVP selection (true data dependency)
+  const canSubmit = !!selectedMVPId;
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
@@ -188,7 +184,7 @@ export default function PilotPlanPage() {
             {/* Test Users */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                Test Users <span className="text-[var(--color-accent-coral)]">*</span>
+                Test Users
               </label>
               <p className="text-xs text-[var(--color-text-muted)] mb-3">
                 Who will test this pilot? Choose 2-3 friendly users who will give honest feedback.
@@ -229,7 +225,7 @@ export default function PilotPlanPage() {
             {/* Metrics to Track */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                Metrics to Track <span className="text-[var(--color-accent-coral)]">*</span>
+                Metrics to Track
               </label>
               <p className="text-xs text-[var(--color-text-muted)] mb-3">
                 What will you measure to know if this is working? Time saved? Error rate? User

@@ -203,9 +203,9 @@ export default function TradeoffNavigatorPage() {
     updateTradeoff(topic, tradeoff?.sliderValue || 50, rationale);
   };
 
-  // Completion: all non-ignored tradeoffs must have rationale >= 20 chars
+  // Track tradeoffs with missing rationale for guidance
   const activeTradeoffs = tradeoffs.filter(t => !t.ignored);
-  const isComplete = activeTradeoffs.length > 0 && activeTradeoffs.every(t => t.rationale.trim().length >= 20);
+  const tradeoffsWithoutRationale = activeTradeoffs.filter(t => !t.rationale.trim());
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
@@ -372,16 +372,11 @@ export default function TradeoffNavigatorPage() {
                       <div>
                         <TextArea
                           label="Rationale"
-                          placeholder="Explain why your organization chose this position... (at least 20 characters)"
+                          placeholder="Explain why your organization chose this position..."
                           value={tradeoff.rationale}
                           onChange={(e) => handleRationaleChange(tradeoff.topic, e.target.value)}
                           className="min-h-[100px]"
                         />
-                        {tradeoff.rationale.length > 0 && tradeoff.rationale.length < 20 && (
-                          <p className="text-xs text-[var(--color-accent-coral)] mt-1">
-                            {20 - tradeoff.rationale.length} more characters needed
-                          </p>
-                        )}
                       </div>
                     )}
                   </div>
@@ -418,15 +413,21 @@ export default function TradeoffNavigatorPage() {
             Back to Working Principles
           </Button>
         </Link>
-        <Link href={isComplete ? "/workshop/session-2" : "#"}>
-          <Button
-            variant="primary"
-            rightIcon={<ArrowRight className="w-4 h-4" />}
-            disabled={!isComplete}
-          >
-            Continue to Session 2
-          </Button>
-        </Link>
+        <div className="flex flex-col items-end gap-2">
+          <Link href="/workshop/session-2">
+            <Button
+              variant="primary"
+              rightIcon={<ArrowRight className="w-4 h-4" />}
+            >
+              Continue to Session 2
+            </Button>
+          </Link>
+          {tradeoffsWithoutRationale.length > 0 && (
+            <p className="text-xs text-[var(--color-text-muted)]">
+              Tip: Add rationale to each tradeoff for better documentation
+            </p>
+          )}
+        </div>
       </motion.div>
 
       {/* Custom Tradeoff Modal */}

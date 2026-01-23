@@ -84,12 +84,12 @@ export default function MVPSpecPage() {
   };
 
   const handleSubmit = () => {
-    if (!selectedFrictionId || !scope.trim() || toolsToUse.length === 0) return;
+    if (!selectedFrictionId) return;
 
     addMVPSpec({
       frictionPointId: selectedFrictionId,
-      scope: scope.trim(),
-      toolsToUse,
+      scope: scope.trim() || "To be defined",
+      toolsToUse: toolsToUse.length > 0 ? toolsToUse : ["To be selected"],
       humanCheckpoints: humanCheckpoints.filter((c) => c.trim()),
       successThreshold: successThreshold.trim() || "Works for 80% of cases",
       timeframe: timeframe.trim() || "2 weeks",
@@ -104,8 +104,8 @@ export default function MVPSpecPage() {
     setTimeframe("2 weeks");
   };
 
-  const canSubmit =
-    selectedFrictionId && scope.trim() && toolsToUse.length > 0;
+  // Only require friction selection (true data dependency)
+  const canSubmit = !!selectedFrictionId;
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
@@ -202,7 +202,7 @@ export default function MVPSpecPage() {
             {/* Scope */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                What are we building? <span className="text-[var(--color-accent-coral)]">*</span>
+                What are we building?
               </label>
               <TextArea
                 value={scope}
@@ -220,7 +220,7 @@ export default function MVPSpecPage() {
             {/* Tools to Use */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                Tools to Use <span className="text-[var(--color-accent-coral)]">*</span>
+                Tools to Use
               </label>
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2">

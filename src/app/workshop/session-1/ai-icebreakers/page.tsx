@@ -276,7 +276,7 @@ export default function AIIcebreakersPage() {
             Back to Session 1
           </Button>
         </Link>
-        {responses.length > 0 && biases.filter(b => b.checked).length >= 3 && (
+        <div className="flex flex-col items-end gap-2">
           <Link href="/workshop/session-1/working-principles">
             <Button
               variant="primary"
@@ -285,7 +285,17 @@ export default function AIIcebreakersPage() {
               Continue to Working Principles
             </Button>
           </Link>
-        )}
+          {responses.length === 0 && (
+            <p className="text-xs text-[var(--color-text-muted)]">
+              Tip: Add at least one participant response above
+            </p>
+          )}
+          {responses.length > 0 && biases.filter(b => b.checked).length < 3 && (
+            <p className="text-xs text-[var(--color-text-muted)]">
+              Tip: Discuss at least 3 cognitive biases for best results
+            </p>
+          )}
+        </div>
       </motion.div>
     </div>
   );

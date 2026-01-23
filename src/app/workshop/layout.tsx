@@ -109,29 +109,29 @@ export default function WorkshopLayout({
     }
   }, [organization, router]);
 
-  // Calculate overall progress based on exercise completion criteria
+  // Calculate overall progress based on "has data" (guided freedom model)
   const { completedCount, totalCount, progressPercent } = useMemo(() => {
     const exerciseStatus: Record<string, boolean> = {
       // Session 1
-      "ai-icebreakers": icebreakerResponses.length > 0 && biases.filter(b => b.checked).length >= 3,
-      "working-principles": workingPrinciples.length === 4 && workingPrinciples.every(p => p.dos.length >= 2 && p.donts.length >= 2),
-      "tradeoff-navigator": tradeoffs.every(t => t.rationale.trim().length >= 20),
+      "ai-icebreakers": icebreakerResponses.length > 0,
+      "working-principles": workingPrinciples.length > 0,
+      "tradeoff-navigator": tradeoffs.some(t => t.rationale.length > 0),
       // Session 2
       "friction-map": frictionPoints.length > 0,
       "opportunity-scoring": scoredOpportunities.length > 0,
-      "priority-matrix": scoredOpportunities.length > 0, // Same data as opportunity-scoring
+      "priority-matrix": scoredOpportunities.length > 0,
       "dot-voting": scoredOpportunities.some(o => o.selectedForPilot),
-      // Session 3 (stub exercises count as not completed)
-      "pattern-matching": false,
-      "future-state-workflow": false,
-      "risk-governance": false,
+      // Session 3
+      "pattern-matching": false, // Not implemented
+      "future-state-workflow": false, // Not implemented
+      "risk-governance": false, // Not implemented
       "mvp-charter": mvpSpecs.length > 0,
       // Session 4
       "roadmap-builder": roadmapMilestones.length > 0,
       "raci-matrix": false, // Not implemented
       "governance": false, // Not implemented
       // Session 5
-      "scaling-checklist": scalingChecklist.length > 0,
+      "scaling-checklist": scalingChecklist.some(i => i.completed),
       "training-plan": trainingPlan.length > 0,
       "lessons-learned": lessonsLearned.length > 0,
       "next-opportunities": nextOpportunities.length > 0,
@@ -142,7 +142,7 @@ export default function WorkshopLayout({
     const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
 
     return { completedCount: completed, totalCount: total, progressPercent: percent };
-  }, [icebreakerResponses, biases, workingPrinciples, tradeoffs, frictionPoints, scoredOpportunities, mvpSpecs, roadmapMilestones, scalingChecklist, trainingPlan, lessonsLearned, nextOpportunities]);
+  }, [icebreakerResponses, workingPrinciples, tradeoffs, frictionPoints, scoredOpportunities, mvpSpecs, roadmapMilestones, scalingChecklist, trainingPlan, lessonsLearned, nextOpportunities]);
 
   if (!organization) {
     return null;

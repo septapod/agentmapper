@@ -295,7 +295,6 @@ export default function WorkshopPage() {
         {sessions.map((session, index) => {
           const isCompleted = session.number < currentSession;
           const isCurrent = session.number === currentSession;
-          const isLocked = session.number > currentSession;
 
           return (
             <motion.div
@@ -306,8 +305,7 @@ export default function WorkshopPage() {
             >
               <Card
                 accent={isCompleted ? "teal" : isCurrent ? "yellow" : "none"}
-                hoverable={!isLocked}
-                className={isLocked ? "opacity-50" : ""}
+                hoverable
               >
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -338,17 +336,15 @@ export default function WorkshopPage() {
                         </CardDescription>
                       </div>
                     </div>
-                    {!isLocked && (
-                      <Link href={session.number === 0 ? "/workshop/onboarding" : `/workshop/session-${session.number}`}>
-                        <Button
-                          variant={isCurrent ? "primary" : "default"}
-                          size="sm"
-                          rightIcon={<ArrowRight className="w-4 h-4" />}
-                        >
-                          {isCompleted ? "Review" : isCurrent ? "Continue" : "Start"}
-                        </Button>
-                      </Link>
-                    )}
+                    <Link href={session.number === 0 ? "/workshop/onboarding" : `/workshop/session-${session.number}`}>
+                      <Button
+                        variant={isCurrent ? "primary" : "default"}
+                        size="sm"
+                        rightIcon={<ArrowRight className="w-4 h-4" />}
+                      >
+                        {isCompleted ? "Review" : isCurrent ? "Continue" : "Start"}
+                      </Button>
+                    </Link>
                   </div>
                 </CardHeader>
 
@@ -363,16 +359,13 @@ export default function WorkshopPage() {
                       return (
                         <Link
                           key={exercise.id}
-                          href={isLocked ? "#" : `/workshop/session-${session.number}/${exercise.id}`}
-                          className={isLocked ? "pointer-events-none" : ""}
+                          href={`/workshop/session-${session.number}/${exercise.id}`}
                         >
                           <div
                             className={`
                               p-3 rounded-lg border transition-all h-full
                               ${
-                                isLocked
-                                  ? "border-white/[0.05] bg-transparent"
-                                  : hasProgress
+                                hasProgress
                                   ? "border-[var(--color-accent-teal)]/30 bg-[var(--color-accent-teal)]/5 hover:border-[var(--color-accent-teal)]/50"
                                   : "border-white/[0.08] bg-[var(--color-bg)] hover:border-white/[0.15] hover:bg-[var(--color-surface)]"
                               }

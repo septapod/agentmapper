@@ -160,8 +160,7 @@ export default function WorkingPrinciplesPage() {
     }
   };
 
-  const isComplete = savedPrinciples.length === 4 &&
-    savedPrinciples.every(p => p.dos.length >= 2 && p.donts.length >= 2);
+  const allPrinciplesStarted = savedPrinciples.length === 4;
 
   const Icon = currentPrinciple.icon;
 
@@ -341,16 +340,22 @@ export default function WorkingPrinciplesPage() {
             Next Principle
           </Button>
         ) : (
-          <Link href={isComplete ? "/workshop/session-1/tradeoff-navigator" : "#"}>
-            <Button
-              variant="primary"
-              onClick={saveCurrent}
-              disabled={!isComplete}
-              rightIcon={<ArrowRight className="w-4 h-4" />}
-            >
-              Continue to Tradeoff Navigator
-            </Button>
-          </Link>
+          <div className="flex flex-col items-end gap-2">
+            <Link href="/workshop/session-1/tradeoff-navigator">
+              <Button
+                variant="primary"
+                onClick={saveCurrent}
+                rightIcon={<ArrowRight className="w-4 h-4" />}
+              >
+                Continue to Tradeoff Navigator
+              </Button>
+            </Link>
+            {!allPrinciplesStarted && (
+              <p className="text-xs text-[var(--color-text-muted)]">
+                Tip: Complete all 4 principles for best results
+              </p>
+            )}
+          </div>
         )}
       </div>
     </div>

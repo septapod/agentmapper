@@ -44,14 +44,14 @@ export default function RoadmapBuilderPage() {
   const [phase, setPhase] = useState<"build" | "pilot" | "refine" | "scale">("build");
 
   const handleSubmit = () => {
-    if (!selectedPilotPlanId || !activity.trim() || !owner.trim()) return;
+    if (!selectedPilotPlanId) return;
 
     addRoadmapMilestone({
       pilotPlanId: selectedPilotPlanId,
       weekStart,
       weekEnd,
-      activity: activity.trim(),
-      owner: owner.trim(),
+      activity: activity.trim() || "To be defined",
+      owner: owner.trim() || "To be assigned",
       successCriteria: successCriteria.trim(),
       phase,
     });
@@ -62,8 +62,8 @@ export default function RoadmapBuilderPage() {
     setSuccessCriteria("");
   };
 
-  const canSubmit =
-    selectedPilotPlanId && activity.trim() && owner.trim() && weekStart <= weekEnd;
+  // Only require pilot plan selection (true data dependency)
+  const canSubmit = !!selectedPilotPlanId && weekStart <= weekEnd;
 
   const selectedPilotMilestones = selectedPilotPlanId
     ? roadmapMilestones.filter((m) => m.pilotPlanId === selectedPilotPlanId)
@@ -245,7 +245,7 @@ export default function RoadmapBuilderPage() {
                 {/* Activity */}
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Activity <span className="text-[var(--color-accent-coral)]">*</span>
+                    Activity
                   </label>
                   <TextArea
                     value={activity}
@@ -258,7 +258,7 @@ export default function RoadmapBuilderPage() {
                 {/* Owner */}
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    Owner <span className="text-[var(--color-accent-coral)]">*</span>
+                    Owner
                   </label>
                   <Input
                     value={owner}
