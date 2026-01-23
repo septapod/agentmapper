@@ -64,22 +64,25 @@ Based on research from McKinsey, BCG, Anthropic, NIST, ISO/IEC, and the FORGE me
 ### Exercise 3.2: Human-AI Collaboration Design (Future State Workflow)
 **Purpose:** Design the target workflow with explicit human-AI collaboration patterns.
 
-**Research Basis:** Anthropic's 6 composable patterns for effective agents + BCG's graduated autonomy framework.
+**Research Basis:** Anthropic's 5 workflow patterns ([Building Effective Agents](https://www.anthropic.com/research/building-effective-agents)) + BCG's Graduated Autonomy Framework ([Dec 2025](https://www.bcg.com/publications/2025/agents-accelerate-next-wave-of-ai-value-creation)).
 
 **Exercise Design:**
-- Select one of Anthropic's patterns for primary workflow:
-  1. **Prompt Chaining** - Sequential steps, fixed subtasks
-  2. **Routing** - Classify inputs, direct to specialists
-  3. **Parallelization** - Run multiple operations simultaneously
-  4. **Orchestrator-Workers** - Central coordinator with dynamic delegation
-  5. **Evaluator-Optimizer** - Generate → evaluate → refine loops
-  6. **Autonomous Agent** - Independent operation with checkpoints
+- Select one of Anthropic's 5 workflow patterns for primary workflow:
+  1. **Prompt Chaining** - Sequential steps where each LLM call processes previous output. Best for fixed subtasks.
+  2. **Routing** - Classify inputs and direct to specialized follow-up tasks. Best when distinct categories exist.
+  3. **Parallelization** - LLMs work simultaneously with outputs aggregated. Best for independent subtasks.
+  4. **Orchestrator-Workers** - Central LLM dynamically delegates to worker LLMs. Best for complex, unpredictable tasks.
+  5. **Evaluator-Optimizer** - One LLM generates, another evaluates in iterative loops. Best when clear evaluation criteria exist.
 
-- Define BCG's graduated autonomy levels:
-  1. **Shadow Mode** - Agent suggests, humans act
-  2. **Suggest Mode** - Tap-to-approve workflow
-  3. **Supervised Autonomy** - Agent acts under policy with monitoring
-  4. **Full Autonomy** - Agent operates independently within boundaries
+- Note: For fully autonomous workflows, these patterns combine into what Anthropic calls "Agents" - systems where LLMs dynamically direct their own processes. Only appropriate for open-ended problems requiring trust in LLM decision-making.
+
+- Define BCG's Graduated Autonomy levels:
+  1. **Shadow Mode (Tier 1)** - Agent suggests, human acts. "Digital whisperer" that drafts options. Training ground to validate agent logic without operational risk.
+  2. **Supervised Autonomy (Tier 2)** - Human-in-the-loop. Agent performs tasks with tap-to-approve workflow.
+  3. **Monitored Autonomy (Tier 3)** - Human-on-the-loop. Agent acts under policy with monitoring, no active approval required.
+  4. **Full Autonomy (Tier 4)** - Human out of the loop. Reserved for mature, low-risk environments where cost of error is negligible.
+
+- Key principle: "Autonomy is a journey of trust, quantified by accuracy." Start at Tier 1 until agent proves alignment with organizational risk appetite.
 
 - Map human oversight requirements:
   - HITL (Human-in-the-loop) checkpoints - active participation required
@@ -87,7 +90,7 @@ Based on research from McKinsey, BCG, Anthropic, NIST, ISO/IEC, and the FORGE me
   - Escalation triggers - when to pull human back in
 
 **Form Fields:**
-- Primary pattern (select from 6 options with descriptions)
+- Primary pattern (select from 5 workflow options with descriptions)
 - Starting autonomy level (select from 4 tiers)
 - Promotion criteria (what earns higher autonomy)
 - HITL checkpoints (list with trigger conditions)
@@ -99,14 +102,14 @@ Based on research from McKinsey, BCG, Anthropic, NIST, ISO/IEC, and the FORGE me
 ### Exercise 3.3: Risk & Governance Assessment (Risk Governance)
 **Purpose:** Assess AI-specific risks and define governance requirements.
 
-**Research Basis:** NIST AI RMF, ISO/IEC 42001-42006, BCG's FAST framework, McKinsey's risk playbook.
+**Research Basis:** NIST AI RMF, ISO/IEC 42001-42006, BCG's Graduated Autonomy Framework ([Dec 2025](https://www.bcg.com/publications/2025/agents-accelerate-next-wave-of-ai-value-creation)), McKinsey's six lessons from 50+ agentic deployments.
 
 **Exercise Design:**
-- Assess organizational maturity using BCG's FAST framework:
-  1. **Exploratory** - Basic prototyping, no structured governance
-  2. **Experimental** - Limited deployments, preliminary integration
-  3. **Operational** - Fully integrated, robust supervision
-  4. **Strategic** - Enterprise-grade, automated monitoring
+- Assess organizational readiness using BCG's Graduated Autonomy Framework:
+  1. **Shadow Mode Ready** - Can support agents that suggest while humans act
+  2. **Supervised Autonomy Ready** - Can support HITL workflows with approval gates
+  3. **Monitored Autonomy Ready** - Can support HOTL with policy-based agent actions
+  4. **Full Autonomy Ready** - Mature governance for independent agent operation
 
 - Evaluate agentic-specific risks (McKinsey's categories):
   - **Decision Boundaries** - Agent making decisions outside scope
@@ -122,8 +125,8 @@ Based on research from McKinsey, BCG, Anthropic, NIST, ISO/IEC, and the FORGE me
   - Update/change management process
 
 **Form Fields:**
-- Current maturity level (select from 4)
-- Target maturity level (select from 4)
+- Current autonomy readiness (select from 4 tiers: Shadow → Full)
+- Target autonomy level for pilot (select from 4 tiers)
 - Risk assessment checklist (toggle each risk, add mitigation)
 - Compliance requirements (text list)
 - Monitoring requirements (text list)

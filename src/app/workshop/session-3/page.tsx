@@ -2,15 +2,30 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, ArrowLeft, Wrench, CheckCircle2 } from "lucide-react";
+import { ArrowRight, ArrowLeft, Wrench, Compass, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StepProgress } from "@/components/ui/ProgressBar";
-import { useMVPSpecs } from "@/store/workshop";
+import { useMVPSpecs, usePilotDesigns } from "@/store/workshop";
 import { ExerciseDataSummary } from "@/components/workshop/ExerciseDataSummary";
 import { SessionSummary } from "@/components/workshop/SessionSummary";
 
 const exercises = [
+  {
+    id: "pilot-design",
+    title: "Pilot Design",
+    icon: <Compass className="w-5 h-5" />,
+    description:
+      "Design how AI will work in your workflow. Choose an AI pattern, set the starting autonomy level, and identify risks to mitigate.",
+    duration: "20-30 min",
+    tips: [
+      "Start with Shadow Mode (AI suggests, humans decide)",
+      "Match your workflow to one of 5 proven AI patterns",
+      "Flag risks early—they're easier to mitigate upfront",
+      "Autonomy is earned through proven performance",
+    ],
+    path: "/workshop/session-3/pilot-design",
+  },
   {
     id: "mvp-spec",
     title: "MVP Specification",
@@ -29,10 +44,13 @@ const exercises = [
 ];
 
 export default function Session3Page() {
+  const pilotDesigns = usePilotDesigns();
   const mvpSpecs = useMVPSpecs();
 
   const getExerciseStatus = (id: string): "pending" | "in-progress" | "completed" => {
     switch (id) {
+      case "pilot-design":
+        return pilotDesigns.length > 0 ? "completed" : "pending";
       case "mvp-spec":
         return mvpSpecs.length > 0 ? "completed" : "pending";
       default:
@@ -43,6 +61,8 @@ export default function Session3Page() {
   // Check if exercise has any data (for showing dashboard vs description)
   const exerciseHasData = (id: string): boolean => {
     switch (id) {
+      case "pilot-design":
+        return pilotDesigns.length > 0;
       case "mvp-spec":
         return mvpSpecs.length > 0;
       default:
@@ -65,8 +85,8 @@ export default function Session3Page() {
         </span>
         <h1 className="text-3xl font-bold mb-4">Design the Pilot</h1>
         <p className="text-[var(--color-text-muted)] text-lg">
-          Organize the work and design your MVP. Define what you'll build, which tools you'll use,
-          where humans stay in the loop, and how you'll measure success.
+          Design how AI will work in your workflow, then define your MVP.
+          Choose patterns, set autonomy levels, identify risks, and specify what you'll build.
         </p>
       </motion.div>
 

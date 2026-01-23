@@ -72,6 +72,30 @@ export interface ScoredOpportunity {
 }
 
 // Session 3 Types - Design the Pilot
+export interface PilotDesign {
+  id: string;
+  frictionPointId: string;           // Links to Session 2 friction point
+
+  // Pattern Selection (Anthropic's 5 workflow patterns)
+  aiPattern: 'prompt-chaining' | 'routing' | 'parallelization' | 'orchestrator-workers' | 'evaluator-optimizer';
+  patternRationale: string;          // Why this pattern?
+
+  // Autonomy Level (BCG's 4 tiers)
+  autonomyLevel: 'shadow' | 'supervised' | 'monitored' | 'full';
+  promotionCriteria: string;         // What earns higher autonomy?
+
+  // Risk Assessment (McKinsey's 4 categories)
+  risks: {
+    decisionBoundaries: boolean;     // Agent deciding outside scope
+    hallucinations: boolean;         // Incorrect outputs as authoritative
+    cybersecurity: boolean;          // New attack vectors
+    chainOfAuthority: boolean;       // Unclear accountability
+  };
+  mitigations: string;               // How we'll address flagged risks
+
+  createdAt: string;
+}
+
 export interface MVPSpec {
   id: string;
   frictionPointId: string;        // Links to selected friction point
@@ -160,6 +184,7 @@ export interface WorkshopState {
   scoredOpportunities: ScoredOpportunity[];
 
   // Session 3 - Design the Pilot
+  pilotDesigns: PilotDesign[];
   mvpSpecs: MVPSpec[];
 
   // Session 4 - Create the Roadmap

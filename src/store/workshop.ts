@@ -8,6 +8,7 @@ import type {
   AITradeoff,
   FrictionPoint,
   ScoredOpportunity,
+  PilotDesign,
   MVPSpec,
   PilotPlan,
   RoadmapMilestone,
@@ -67,6 +68,11 @@ interface WorkshopActions {
   deleteScoredOpportunity: (id: string) => void;
   voteForOpportunity: (id: string) => void;
   togglePilotSelection: (id: string) => void;
+
+  // Session 3 - Pilot Designs
+  addPilotDesign: (design: Omit<PilotDesign, "id" | "createdAt">) => void;
+  updatePilotDesign: (id: string, updates: Partial<PilotDesign>) => void;
+  deletePilotDesign: (id: string) => void;
 
   // Session 3 - MVP Specs
   addMVPSpec: (spec: Omit<MVPSpec, "id" | "createdAt">) => void;
@@ -160,6 +166,7 @@ const initialState: WorkshopState & CloudState & VotingState = {
   scoredOpportunities: [],
 
   // Session 3
+  pilotDesigns: [],
   mvpSpecs: [],
 
   // Session 4
@@ -381,6 +388,30 @@ export const useWorkshopStore = create<WorkshopState & CloudState & VotingState 
           scoredOpportunities: state.scoredOpportunities.map((o) =>
             o.id === id ? { ...o, selectedForPilot: !o.selectedForPilot } : o
           ),
+          isDirty: true,
+        })),
+
+      // Session 3 - Pilot Designs
+      addPilotDesign: (design) =>
+        set((state) => ({
+          pilotDesigns: [
+            ...state.pilotDesigns,
+            { ...design, id: generateId(), createdAt: new Date().toISOString() },
+          ],
+          isDirty: true,
+        })),
+
+      updatePilotDesign: (id, updates) =>
+        set((state) => ({
+          pilotDesigns: state.pilotDesigns.map((d) =>
+            d.id === id ? { ...d, ...updates } : d
+          ),
+          isDirty: true,
+        })),
+
+      deletePilotDesign: (id) =>
+        set((state) => ({
+          pilotDesigns: state.pilotDesigns.filter((d) => d.id !== id),
           isDirty: true,
         })),
 
@@ -771,7 +802,10 @@ export const useWorkshopStore = create<WorkshopState & CloudState & VotingState 
         // Session 2 - Find the Friction
         frictionPoints: state.frictionPoints,
         scoredOpportunities: state.scoredOpportunities,
+        // Session 3 - Design the Pilot
+        pilotDesigns: state.pilotDesigns,
         mvpSpecs: state.mvpSpecs,
+        // Session 4 - Create the Roadmap
         pilotPlans: state.pilotPlans,
         roadmapMilestones: state.roadmapMilestones,
         // Session 5 - Empower Teams
@@ -801,7 +835,12 @@ export const useTradeoffs = () => useWorkshopStore((state) => state.aiTradeoffs)
 // Session 2 selectors
 export const useFrictionPoints = () => useWorkshopStore((state) => state.frictionPoints);
 export const useScoredOpportunities = () => useWorkshopStore((state) => state.scoredOpportunities);
+
+// Session 3 selectors
+export const usePilotDesigns = () => useWorkshopStore((state) => state.pilotDesigns);
 export const useMVPSpecs = () => useWorkshopStore((state) => state.mvpSpecs);
+
+// Session 4 selectors
 export const usePilotPlans = () => useWorkshopStore((state) => state.pilotPlans);
 export const useRoadmapMilestones = () => useWorkshopStore((state) => state.roadmapMilestones);
 export const useScalingChecklist = () => useWorkshopStore((state) => state.scalingChecklist);
